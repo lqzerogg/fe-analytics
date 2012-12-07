@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Location</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="">
+<meta name="author" content="">
+<!-- Le styles -->
+<link rel="stylesheet" href="bootstrap/css/bootstrap.css">
+<style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+      .perBar {
+      	height: 1.1em;
+      	background-color: #1a87d5;
+      	float: left;
+      	margin: 0 0.3em 0 0;
+      }
+      .options {
+      	margin: 0;
+      }
+      .options li {
+      	display: inline-block;
+      	margin: 0 20px 0 0;
+      }
+      .options select {
+      	margin-bottom: 0;
+      	height: 20px;
+      }
+      .dl-horizontal dt {
+      	text-align: left;
+      	width: 100px;
+      }
+      .dl-horizontal dd {
+      	margin-left: 120px;
+      }
+</style>
+<link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+<!--[if lt IE 9]>
+<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+</head>
+<body>
+<div class="navbar navbar-inverse navbar-fixed-top">
+	<div class="navbar-inner">
+		<div class="container-fluid">
+			<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			</a>
+			<a class="brand" href="#">Performance Monitor</a>
+			<div class="nav-collapse collapse">
+				<p class="navbar-text pull-right">
+					 Logged in as <a href="#" class="navbar-link">Username</a>
+				</p>
+				<ul class="nav">
+					<li class="active"><a href="#">Home</a></li>
+					<li><a href="#about">About</a></li>
+					<li><a href="#contact">Contact</a></li>
+				</ul>
+			</div>
+			<!--/.nav-collapse -->
+		</div>
+	</div>
+</div>
+<div class="container-fluid">
+	<div class="row-fluid">
+		<div class="span2">
+			<div class="well sidebar-nav">
+				<ul class="nav nav-list">
+					<li class="nav-header"><a href="overview.html">Overview</a></li>
+					<li><a href="#">Browser &amp; OS</a></li>
+					<li class="active"><a href="#">Location</a></li>
+				</ul>
+			</div>
+			<!--/.well -->
+		</div>
+		<!--/span-->
+		<div class="span10">
+			<h3>Location</h3>
+			<div>
+				<div class="btn-toolbar clearfix">
+					<div class="btn-group pull-left">
+						<button class="btn">Dom Ready</button>
+						<button class="btn dropdown-toggle" data-toggle="dropdown">
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu">
+							<li><a href="#">Domain Look Up</a></li>
+							<li><a href="#">Dom Ready</a></li>
+							<li><a href="#">Window Load</a></li>
+						</ul>
+					</div>
+
+					<div class="btn-group pull-right" data-toggle="buttons-checkbox">
+						<button class="btn active"><i class="icon-signal"></i></button>
+						<button class="btn active"><i class="icon-picture"></i></button>
+					</div>
+
+					<div class="btn-group pull-right" data-toggle="buttons-radio">
+						<button class="btn active">Day</button>
+						<button class="btn">Week</button>
+						<button class="btn">Month</button>
+					</div>
+
+					<label class="pull-right span2">To:
+						<input id="date-end" type="text" class="input-small" value="2012/10/22" />
+					</label>
+					<label class="pull-right">From: 
+						<input id="date-start" type="text" class="input-small" value="2012/09/13" />
+					</label>
+				</div>
+			</div>
+			<div class="hero-unit">
+				
+			</div>
+
+			<dl class="dl-horizontal">
+				<dt>Location:</dt>
+				<dd>
+					<ul class="options">
+						<li>Country</li>
+						<li><a href="#">City</a></li>
+						<li><a href="#">Continent</a></li>
+						<li><a href="#">Sub Continent Region</a></li>
+					</ul>
+				</dd>
+			</dl>
+
+			<dl class="dl-horizontal">
+				<dt>Browser &amp; OS:</dt>
+				<dd>
+					<ul class="options">
+						<li>
+							Browser
+							<select>
+								<option>All</option>
+								<option>Chrome</option>
+								<option>Internet Explorer</option>
+								<option>Safari</option>
+								<option>Firefox</option>
+							</select>
+						</li>
+						<li>
+							Operating System
+							<select>
+								<option>All</option>
+								<option>Mac OS</option>
+								<option>Windows</option>
+								<option>iOS</option>
+								<option>Android</option>
+							</select>
+						</li>
+					</ul>
+				</dd>
+			</dl>
+
+			<div>
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th><button class="btn btn-small">plot view</button></th>
+							<th>Country</th>
+							<th><a href="#">Domain Look Up <i class="icon-arrow-up"></i></a></th>
+							<th><a href="#">Dom Ready</a></th>
+							<th><a href="#">Window Load</a></th>
+							<th><a href="#">Visits</a></th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><input type="checkbox" /></td>
+							<td><a href="#">United States</a></td>
+							<td>0.5</td>
+							<td>5.2</td>
+							<td>8.6</td>
+							<td>23432</td>
+							<td>
+								<div style="width: 35px;" class="perBar"></div>
+								<span>35%</span>
+							</td>
+						</tr>
+						<tr>
+							<td><input type="checkbox" /></td>
+							<td><a href="#">France</a></td>
+							<td>0.5</td>
+							<td>5.2</td>
+							<td>8.6</td>
+							<td>23432</td>
+							<td>
+								<div style="width: 25px;" class="perBar"></div>
+								<span>25%</span>
+							</td>
+						</tr>
+						<tr>
+							<td><input type="checkbox" /></td>
+							<td><a href="#">United Kingdom</a></td>
+							<td>0.5</td>
+							<td>5.2</td>
+							<td>8.6</td>
+							<td>23432</td>
+							<td>
+								<div style="width: 10px;" class="perBar"></div>
+								<span>10%</span>
+							</td>
+						</tr>
+						<tr>
+							<td><input type="checkbox" /></td>
+							<td><a href="#">Germany</a></td>
+							<td>0.5</td>
+							<td>5.2</td>
+							<td>8.6</td>
+							<td>23432</td>
+							<td>
+								<div style="width: 5px;" class="perBar"></div>
+								<span>5%</span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<div class="pagination pagination-right">
+					<ul>
+						<li class="disabled"><a href="#">&laquo;</a></li>
+						<li class="active"><a href="#">1</a></li>
+						<li><a href="#">2</a></li>
+						<li><a href="#">3</a></li>
+						<li><a href="#">4</a></li>
+						<li><a href="#">5</a></li>
+						<li><a href="#">&raquo;</a></li>
+					</ul>
+				</div>
+			</div>
+			<!--/row-->
+		</div>
+		<!--/span-->
+	</div>
+	<!--/row-->
+	<hr>
+	<footer>
+	<p>
+		&copy; Lightinthebox.com 2012
+	</p>
+	</footer>
+</div>
+<!--/.fluid-container-->
+<!-- Le javascript
+    ================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css" />
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+<script src="bootstrap/js/bootstrap.js"></script>
+
+<script>
+$(function() {
+	$('#date-start, #date-end').datepicker();
+});
+</script>
+</body>
+</html>

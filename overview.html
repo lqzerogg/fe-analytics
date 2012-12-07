@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Overview</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="">
+<meta name="author" content="">
+<!-- Le styles -->
+<link rel="stylesheet" href="bootstrap/css/bootstrap.css">
+<style type="text/css">
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
+      .per-bar {
+      	height: 1.1em;
+      	background-color: #1a87d5;
+      	float: left;
+      	margin: 0 0.3em 0 0;
+      }
+      .options {
+      	margin: 0;
+      }
+      .options li {
+      	display: inline-block;
+      	margin: 0 20px 0 0;
+      }
+      .dl-horizontal dt {
+      	text-align: left;
+      	width: 100px;
+      }
+      .dl-horizontal dd {
+      	margin-left: 120px;
+      }
+
+      #date-range, #date-unit {
+      	margin-right: 30px;
+      }
+      #date-range > label {
+      	margin-right: 10px;
+      }
+</style>
+<link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+<!--[if lt IE 9]>
+<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+</head>
+<body>
+<div class="navbar navbar-inverse navbar-fixed-top">
+	<div class="navbar-inner">
+		<div class="container-fluid">
+			<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			</a>
+			<a class="brand" href="#">Performance Monitor</a>
+			<div class="nav-collapse collapse">
+				<p class="navbar-text pull-right">
+					 Logged in as <a href="#" class="navbar-link">Username</a>
+				</p>
+				<ul class="nav">
+					<li class="active"><a href="#">Home</a></li>
+					<li><a href="#about">About</a></li>
+					<li><a href="#contact">Contact</a></li>
+				</ul>
+			</div>
+			<!--/.nav-collapse -->
+		</div>
+	</div>
+</div>
+<div class="container-fluid">
+	<div class="row-fluid">
+		<div class="span2">
+			<div class="well sidebar-nav">
+				<ul class="nav nav-list">
+					<li class="nav-header active"><a href="#">Overview</a></li>
+					<li><a href="#">Browser &amp; OS</a></li>
+					<li><a href="location.html">Location</a></li>
+				</ul>
+			</div>
+			<!--/.well -->
+		</div>
+		<!--/span-->
+		<div class="span10">
+			<h3>Overview</h3>
+			<div>
+				<div class="btn-toolbar clearfix">
+					<select id="page-type" class="pull-left">
+						<optgroup label="litb">
+							<option value="index">litb 首页</option>
+							<option value="products_category">litb 品类页</option>
+							<option value="advanced_search_result">litb 搜索结果页</option>
+							<option value="narrow_search">litb narrow search页</option>
+							<option value="product_info">litb 单品页</option>
+						</optgroup>
+						<optgroup label="mini">
+							<option value="index">mini 首页</option>
+							<option value="products_category">mini 品类页</option>
+							<option value="advanced_search_result">mini 搜索结果页</option>
+							<option value="narrow_search">mini narrow search页</option>
+							<option value="product_info">mini 单品页</option>
+						</optgroup>
+					</select>
+
+					<div id="chart-type" class="btn-group pull-right" data-toggle="buttons-radio">
+						<button class="btn" value="column"><i class="icon-signal"></i></button>
+						<button class="btn active" value="area"><i class="icon-picture"></i></button>
+					</div>
+
+					<div id="date-unit" class="btn-group pull-right" data-toggle="buttons-radio">
+						<button class="btn active" value="daily">Day</button>
+						<button class="btn" value="weekly">Week</button>
+						<button class="btn" value="monthly">Month</button>
+					</div>
+
+					<div id="date-range" class="pull-right">
+						<label class="pull-left">From: 
+							<input id="date-start" type="text" class="input-small" value="09/13/2012" />
+						</label>
+						<label class="pull-left">To:
+							<input id="date-end" type="text" class="input-small" value="10/22/2012" />
+						</label>
+						<button class="btn">accept</button>
+					</div>
+				</div>
+
+					<div id="data-types" class="btn-group pull-left" data-toggle="buttons-checkbox">
+						<button class="btn active">Window Load</button>
+						<button class="btn active">Dom Ready</button>
+						<button class="btn active">Domain Look Up</button>
+					</div>
+			</div>
+			<div id="plot-view">
+				
+			</div>
+
+			<dl class="dl-horizontal data-dimension">
+				<dt>Location:</dt>
+				<dd>
+					<ul class="options">
+						<li>Country <a href="#"><i class="icon-remove"></i></a></li>
+					</ul>
+				</dd>
+			</dl>
+
+			<dl class="dl-horizontal data-dimension">
+				<dt>Browser &amp; OS:</dt>
+				<dd>
+					<ul class="options">
+						<li>Browser <a href="#"><i class="icon-remove"></i></a></li>
+					</ul>
+				</dd>
+			</dl>
+
+			<div>
+				<table id="table-view" class="table table-striped">
+					<thead>
+						<tr>
+							<th><button class="btn btn-link">All plot view</button></th>
+							<th>Country</th>
+							<th>Browser</th>
+							<th><a href="#">Domain Look Up</a></th>
+							<th><a href="#">Dom Ready</a></th>
+							<th><a href="#">Window Load</a></th>
+							<th><a href="#">Visits <i class="icon-arrow-down"></i></a></th>
+							<th></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><button class="btn btn-link">plot view</button></td>
+							<td><a href="#">United States</a></td>
+							<td><a href="#">Chrome</a></td>
+							<td>0.5</td>
+							<td>5.2</td>
+							<td>8.6</td>
+							<td>23432</td>
+							<td>
+								<div style="width: 35px;" class="per-bar"></div>
+								<span>35%</span>
+							</td>
+						</tr>
+						<tr>
+							<td><button class="btn btn-link">plot view</button></td>
+							<td><a href="#">France</a></td>
+							<td><a href="#">Firefox</a></td>
+							<td>0.5</td>
+							<td>5.2</td>
+							<td>8.6</td>
+							<td>23432</td>
+							<td>
+								<div style="width: 25px;" class="per-bar"></div>
+								<span>25%</span>
+							</td>
+						</tr>
+						<tr>
+							<td><button class="btn btn-link">plot view</button></td>
+							<td><a href="#">United Kingdom</a></td>
+							<td><a href="#">Chrome</a></td>
+							<td>0.5</td>
+							<td>5.2</td>
+							<td>8.6</td>
+							<td>23432</td>
+							<td>
+								<div style="width: 10px;" class="per-bar"></div>
+								<span>10%</span>
+							</td>
+						</tr>
+						<tr>
+							<td><button class="btn btn-link">plot view</button></td>
+							<td><a href="#">Germany</a></td>
+							<td><a href="#">Chrome</a></td>
+							<td>0.5</td>
+							<td>5.2</td>
+							<td>8.6</td>
+							<td>23432</td>
+							<td>
+								<div style="width: 5px;" class="per-bar"></div>
+								<span>5%</span>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<!-- div class="pagination pagination-right">
+					<ul>
+						<li class="disabled"><a href="#">&laquo;</a></li>
+						<li class="active"><a href="#">1</a></li>
+						<li><a href="#">2</a></li>
+						<li><a href="#">3</a></li>
+						<li><a href="#">4</a></li>
+						<li><a href="#">5</a></li>
+						<li><a href="#">&raquo;</a></li>
+					</ul>
+				</div -->
+			</div>
+			<!--/row-->
+		</div>
+		<!--/span-->
+	</div>
+	<!--/row-->
+	<hr>
+	<footer>
+	<p>
+		&copy; Lightinthebox.com 2012
+	</p>
+	</footer>
+</div>
+<!--/.fluid-container-->
+<!-- Le javascript
+    ================================================== -->
+<!-- Placed at the end of the document so the pages load faster -->
+<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css" />
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+<script src="bootstrap/js/bootstrap.js"></script>
+<script src="Highcharts-2.3.3/highcharts.js"></script>
+
+<script>
+$('#date-start, #date-end').datepicker();
+
+(function drawPlot() {
+	var ONE_DAY = 24 * 3600 * 1000;
+
+	var dataGenerator = {
+		randomBase: {
+			'Domain Look Up': [0, 1000],
+			'Dom Ready': [10000, 15000],
+			'Window Load': [0, 10000]
+		},
+		randomValue: function(min, max) {
+			return min + Math.ceil( Math.random() * (max-min) );
+		},
+		byInterval: function(type, startDate, endDate, interval) {
+			var data = new Array();
+			while ( startDate <= endDate ) {
+				data.push({x: startDate.getTime(), y:this.randomValue(this.randomBase[type][0], this.randomBase[type][1])});
+				startDate.setDate(startDate.getDate() + interval);
+			}
+			return data;
+		},
+		daily: function(type, startDate, endDate) {
+			return this.byInterval(type, startDate, endDate, 1);
+		},
+		weekly: function(type, startDate, endDate) {
+			return this.byInterval(type, startDate, endDate, 7);
+		},
+		monthly: function(type, startDate, endDate) {
+			var data = new Array();
+			startDate.setDate(1);
+			while ( startDate <= endDate ) {
+				data.push({x: startDate.getTime(), y:this.randomValue(this.randomBase[type][0], this.randomBase[type][1])});
+				startDate.setMonth(startDate.getMonth() + 1);
+			}
+			return data;
+		}
+	};
+
+	var draw = function(options){
+		chart = new Highcharts.Chart({
+			chart: {
+				renderTo: 'plot-view',
+				type: options.chartType ? options.chartType : 'area',
+			},
+			title: {
+				text: 'FrontEnd Performance'
+			},
+			subtitle: {
+				text: options.dimensions ? options.dimensions : ''
+			},
+			xAxis: {
+				type: 'datetime',
+				minTickInterval: ONE_DAY
+			},
+			yAxis: {
+				title: {
+					text: 'Performance Timing'
+				},
+				labels: {
+					formatter: function () {
+						return this.value + 'ms';
+					}
+				}
+			},
+			plotOptions: {
+				column: {
+					stacking: 'normal'
+				},
+				area: {
+					stacking: 'normal',
+					marker: {
+						enabled: false,
+						symbol: 'circle',
+						radius: 2
+					}
+				}
+			},
+			series: options.series ? options.series : [{
+				name: 'Window Load',
+				data: dataGenerator.daily('Window Load', new Date($('#date-start').val()), new Date($('#date-end').val()))
+			}, {
+				name: 'Dom Ready',
+				data: dataGenerator.daily('Dom Ready', new Date($('#date-start').val()), new Date($('#date-end').val()))
+			}, {
+				name: 'Domain Look Up',
+				data: dataGenerator.daily('Domain Look Up', new Date($('#date-start').val()), new Date($('#date-end').val()))
+			}]
+		});
+	};
+
+	draw({});
+
+	redrawPlot = function(options) {
+		var series = new Array();
+		$.each($('#data-types > .active'), function() {
+			series.push({
+				name: $(this).text(),
+				data: dataGenerator[$('#date-unit > .active').val()]($(this).text(), new Date($('#date-start').val()), new Date($('#date-end').val()))
+			})
+		});
+		chart.destroy();
+		draw( $.extend( {
+			chartType: $('#chart-type > .active').val(),
+			series: series
+		}, options) );
+	};
+})();
+
+(function drawTable() {
+	var ONE_DAY = 24 * 3600 * 1000;
+
+	var dataGenerator = {
+		dimensions: {
+			Country: [ 'United States', 'France', 'Germany', 'Spain', 'Brazil', 'Portugal' ],
+			Browser: [ 'Chrome', 'Firefox', 'Internet Explorer' ]
+		},
+		randomBase: {
+			'Domain Look Up': [0, 1000],
+			'Dom Ready': [10000, 15000],
+			'Window Load': [15000, 25000],
+			'Visits': [20000, 50000]
+		},
+		randomValue: function(min, max) {
+			return min + Math.ceil( Math.random() * (max-min) );
+		},
+		singleResult: function(types) {
+			if ( !types || types.length == 0 ) {
+				return new Object();
+			}
+			var result = new Object();
+			for ( var i = 0; i < types.length; i++ ) {
+				result[types[i]] = this.randomValue( this.randomBase[types[i]][0], this.randomBase[types[i]][1] );
+			}
+			return result;
+		},
+		getData: function( types, dimensions ) {
+			var data = new Array();
+			if ( dimensions && dimensions.length > 0 ) {
+				data.push(new Object());
+				for ( var i = 0; i < dimensions.length; i++ ) {
+					var temp = new Array();
+					for ( var j = 0; j < this.dimensions[dimensions[i]].length; j++ ) {
+						for ( var k = 0; k < data.length; k++ ) {
+							var obj = new Object();
+							obj[dimensions[i]] = this.dimensions[dimensions[i]][j];
+							temp.push( $.extend( obj, data[k] ) );
+						}
+					}
+					data = temp;
+				}
+				for ( var i = 0; i < data.length; i++ ) {
+					data[i] = $.extend(data[i], this.singleResult(types) );
+				}
+			} else {
+				data.push( this.singleResult(types) );
+			}
+			return data;
+		}
+	};
+
+	var draw = function(options){
+		var theadHtml = '<tr><th><button class="btn btn-link allPlotViewBtn">All plot view</button></th>',
+			tbodyHtml = '';
+		for (var m = 0; m < options.data.length; m++ ) {
+			var rowHtml = '<tr><td><button class="btn btn-link plotViewBtn">plot view</button></td>';
+			if ( options.dimensions ) {
+				for ( var i = 0; i < options.dimensions.length; i++ ) {
+					if ( m == 0 ) {
+						theadHtml += '<th>' + options.dimensions[i] + '</th>';
+					}
+					rowHtml += '<td><a href="#">' + options.data[m][options.dimensions[i]] + '</a></td>';
+				}
+			}
+			if ( options.types ) {
+				for ( var i = 0; i < options.types.length; i++ ) {
+					if ( m == 0 ) {
+						theadHtml += '<th><a href="#">' + options.types[i] + '</a></th>';
+					}
+					rowHtml += '<td>' + options.data[m][options.types[i]] + '</td>';
+				}
+			}
+			tbodyHtml += rowHtml + '</tr>';
+		}
+		$('#table-view > thead').html(theadHtml + '</tr>');
+		$('#table-view > tbody').html(tbodyHtml);
+	};
+
+	redrawTable = function() {
+		var types = new Array();
+		$.each($('#data-types > .active'), function() {
+			types.push( $(this).text() );
+		});
+		types.push('Visits');
+		var dimensions = new Array();
+		$.each( $('.data-dimension'), function() {
+			$.each( $('li', this), function() {
+				if ( $('a', this).children('i').length > 0 ) {
+					dimensions.push( $.trim($(this).text()) );
+				}
+			} );
+		} );
+		draw({
+			types: types,
+			dimensions: dimensions,
+			data: dataGenerator.getData(types, dimensions)
+		});
+	};
+
+	redrawTable();
+})();
+
+$('#data-types > button, #date-range > button').click(function() {
+	setTimeout(redrawPlot, 200);
+	setTimeout(redrawTable, 200);
+});
+$('#page-type').change(function() {
+	setTimeout(redrawPlot, 200);
+	setTimeout(redrawTable, 200);
+});
+$('#chart-type > button, #date-unit > button').click(function() {
+	setTimeout(redrawPlot, 200);
+});
+
+$('.data-dimension li a').live('click', function() {
+	if ( $(this).children('i').length > 0 ) {
+		var li = $(this).parent();
+		$(this).remove();
+		li.wrapInner('<a href="#" />');
+	} else {
+		$(this).parent().text($(this).text()).append('<a href="#"><i class="icon-remove"></i></a>');
+	}
+	setTimeout(redrawTable, 200);
+});
+
+$('#table-view .allPlotViewBtn').live('click', function() {
+	redrawPlot();
+});
+
+$('#table-view .plotViewBtn').live('click', function() {
+	var dimStr = '',
+		dimElems = $(this).parent().siblings().children('a');
+	for ( var i = 0; i < dimElems.length; i++ ) {
+		var idx = $(dimElems[i]).parents('tr').children().index($(dimElems[i]).parent());
+		dimStr += $('#table-view > thead > tr > th:eq('+idx+')').text() + ': ';
+		dimStr += $(dimElems[i]).text() + ' ';
+	}
+
+	redrawPlot({dimensions: dimStr});
+})
+</script>
+
+</body>
+</html>

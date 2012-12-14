@@ -261,9 +261,9 @@
 <script>
 $('#date-start, #date-end').datepicker();
 
-(function drawPlot() {
-	var ONE_DAY = 24 * 3600 * 1000;
+var ONE_DAY = 24 * 3600 * 1000;
 
+(function drawPlot() {
 	var dataGenerator = {
 		randomBase: {
 			'Domain Look Up': [0, 1000],
@@ -271,11 +271,11 @@ $('#date-start, #date-end').datepicker();
 			'Window Load': [0, 10000]
 		},
 		randomValue: function(min, max) {
-			return min + Math.ceil( Math.random() * (max-min) );
+			return min + Math.ceil(Math.random() * (max-min));
 		},
 		byInterval: function(type, startDate, endDate, interval) {
 			var data = new Array();
-			while ( startDate <= endDate ) {
+			while (startDate <= endDate) {
 				data.push({x: startDate.getTime(), y:this.randomValue(this.randomBase[type][0], this.randomBase[type][1])});
 				startDate.setDate(startDate.getDate() + interval);
 			}
@@ -290,7 +290,7 @@ $('#date-start, #date-end').datepicker();
 		monthly: function(type, startDate, endDate) {
 			var data = new Array();
 			startDate.setDate(1);
-			while ( startDate <= endDate ) {
+			while (startDate <= endDate) {
 				data.push({x: startDate.getTime(), y:this.randomValue(this.randomBase[type][0], this.randomBase[type][1])});
 				startDate.setMonth(startDate.getMonth() + 1);
 			}
@@ -361,16 +361,14 @@ $('#date-start, #date-end').datepicker();
 			})
 		});
 		chart.destroy();
-		draw( $.extend( {
+		draw($.extend({
 			chartType: $('#chart-type > .active').val(),
 			series: series
-		}, options) );
+		}, options));
 	};
 })();
 
 (function drawTable() {
-	var ONE_DAY = 24 * 3600 * 1000;
-
 	var dataGenerator = {
 		dimensions: {
 			Country: [ 'United States', 'France', 'Germany', 'Spain', 'Brazil', 'Portugal' ],
@@ -383,38 +381,38 @@ $('#date-start, #date-end').datepicker();
 			'Visits': [20000, 50000]
 		},
 		randomValue: function(min, max) {
-			return min + Math.ceil( Math.random() * (max-min) );
+			return min + Math.ceil(Math.random() * (max-min));
 		},
 		singleResult: function(types) {
-			if ( !types || types.length == 0 ) {
+			if (!types || types.length == 0) {
 				return new Object();
 			}
 			var result = new Object();
-			for ( var i = 0; i < types.length; i++ ) {
-				result[types[i]] = this.randomValue( this.randomBase[types[i]][0], this.randomBase[types[i]][1] );
+			for (var i = 0; i < types.length; i++) {
+				result[types[i]] = this.randomValue(this.randomBase[types[i]][0], this.randomBase[types[i]][1]);
 			}
 			return result;
 		},
-		getData: function( types, dimensions ) {
+		getData: function(types, dimensions) {
 			var data = new Array();
-			if ( dimensions && dimensions.length > 0 ) {
+			if (dimensions && dimensions.length > 0) {
 				data.push(new Object());
-				for ( var i = 0; i < dimensions.length; i++ ) {
+				for (var i = 0; i < dimensions.length; i++) {
 					var temp = new Array();
-					for ( var j = 0; j < this.dimensions[dimensions[i]].length; j++ ) {
-						for ( var k = 0; k < data.length; k++ ) {
+					for (var j = 0; j < this.dimensions[dimensions[i]].length; j++) {
+						for (var k = 0; k < data.length; k++) {
 							var obj = new Object();
 							obj[dimensions[i]] = this.dimensions[dimensions[i]][j];
-							temp.push( $.extend( obj, data[k] ) );
+							temp.push($.extend(obj, data[k]));
 						}
 					}
 					data = temp;
 				}
-				for ( var i = 0; i < data.length; i++ ) {
-					data[i] = $.extend(data[i], this.singleResult(types) );
+				for (var i = 0; i < data.length; i++) {
+					data[i] = $.extend(data[i], this.singleResult(types));
 				}
 			} else {
-				data.push( this.singleResult(types) );
+				data.push(this.singleResult(types));
 			}
 			return data;
 		}
@@ -423,24 +421,29 @@ $('#date-start, #date-end').datepicker();
 	var draw = function(options){
 		var theadHtml = '<tr><th><button class="btn btn-link allPlotViewBtn">All plot view</button></th>',
 			tbodyHtml = '';
-		for (var m = 0; m < options.data.length; m++ ) {
+		for (var m = 0; m < options.data.length; m++) {
 			var rowHtml = '<tr><td><button class="btn btn-link plotViewBtn">plot view</button></td>';
-			if ( options.dimensions ) {
-				for ( var i = 0; i < options.dimensions.length; i++ ) {
-					if ( m == 0 ) {
+			if (options.dimensions) {
+				for (var i = 0; i < options.dimensions.length; i++) {
+					if (m == 0) {
 						theadHtml += '<th>' + options.dimensions[i] + '</th>';
 					}
 					rowHtml += '<td><a href="#">' + options.data[m][options.dimensions[i]] + '</a></td>';
 				}
 			}
-			if ( options.types ) {
-				for ( var i = 0; i < options.types.length; i++ ) {
-					if ( m == 0 ) {
+			if (options.types) {
+				for (var i = 0; i < options.types.length; i++) {
+					if (m == 0) {
 						theadHtml += '<th><a href="#">' + options.types[i] + '</a></th>';
 					}
 					rowHtml += '<td>' + options.data[m][options.types[i]] + '</td>';
 				}
 			}
+			if (m == 0) {
+				theadHtml += '<th>Proportion</th>';
+			}
+			rowHtml += '<td><div style="width: ' + options.data[m]['Proportion'] + 'px;" class="per-bar"></div><span>' + options.data[m]['Proportion'] + '%</span></td>';
+
 			tbodyHtml += rowHtml + '</tr>';
 		}
 		$('#table-view > thead').html(theadHtml + '</tr>');
@@ -450,21 +453,30 @@ $('#date-start, #date-end').datepicker();
 	redrawTable = function() {
 		var types = new Array();
 		$.each($('#data-types > .active'), function() {
-			types.push( $(this).text() );
+			types.push($(this).text());
 		});
 		types.push('Visits');
 		var dimensions = new Array();
-		$.each( $('.data-dimension'), function() {
-			$.each( $('li', this), function() {
-				if ( $('a', this).children('i').length > 0 ) {
-					dimensions.push( $.trim($(this).text()) );
+		$.each($('.data-dimension'), function() {
+			$.each($('li', this), function() {
+				if ($('a', this).children('i').length > 0) {
+					dimensions.push($.trim($(this).text()));
 				}
-			} );
-		} );
+			});
+		});
+
+		var data = dataGenerator.getData(types, dimensions),
+			allVisits = 0;
+		for (var m = 0; m < data.length; m++) {
+			allVisits += data[m]['Visits'];
+		}
+		for (var m = 0; m < data.length; m++) {
+			data[m]['Proportion'] = Math.round(data[m]['Visits'] / allVisits * 100);
+		}
 		draw({
 			types: types,
 			dimensions: dimensions,
-			data: dataGenerator.getData(types, dimensions)
+			data: data
 		});
 	};
 
@@ -484,7 +496,7 @@ $('#chart-type > button, #date-unit > button').click(function() {
 });
 
 $('.data-dimension li a').live('click', function() {
-	if ( $(this).children('i').length > 0 ) {
+	if ($(this).children('i').length > 0) {
 		var li = $(this).parent();
 		$(this).remove();
 		li.wrapInner('<a href="#" />');
@@ -501,7 +513,7 @@ $('#table-view .allPlotViewBtn').live('click', function() {
 $('#table-view .plotViewBtn').live('click', function() {
 	var dimStr = '',
 		dimElems = $(this).parent().siblings().children('a');
-	for ( var i = 0; i < dimElems.length; i++ ) {
+	for (var i = 0; i < dimElems.length; i++) {
 		var idx = $(dimElems[i]).parents('tr').children().index($(dimElems[i]).parent());
 		dimStr += $('#table-view > thead > tr > th:eq('+idx+')').text() + ': ';
 		dimStr += $(dimElems[i]).text() + ' ';

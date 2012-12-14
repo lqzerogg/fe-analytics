@@ -12,6 +12,7 @@ body {
 	width: 80%;
 	height: 500px;
 	margin-top: 20px;
+	font-family: Monaco;
 }
 </style>
 </head>
@@ -19,14 +20,45 @@ body {
 	<h1><%= title %></h1>
 	<form action="/save" method="post">
 		<textarea id="editArea"><%= content %></textarea>
-		<div class="btn-group">
+		<div>
 			<button type="submit" class="btn btn-primary btn-large">Save</button>
+			<button id="lintBtn" type="button" class="btn btn-success btn-large">Lint</button>
 		</div>
 	</form>
+
+	<ul id="lintErrors"></ul>
 
 <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css" />
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
 <script src="/bootstrap/js/bootstrap.js"></script>
+
+<script>
+$('#lintBtn').click(function() {
+	$.ajax({
+		url: '/lint',
+		type: 'post',
+		data: {data: $('#editArea').val()},
+		error: function() {
+			$('#lintErrors').html('An error occured in jslint.');
+		},
+		success: function(errors) {
+			var i = 0, html = '';
+			if (errors === null || errors.length === 0) {
+				$('#lintErrors').html('Everything is OK.');
+			} else {
+				for (i in errors) {
+					var err = errors[i];
+					if (err !== null) {
+						html += '<li>' + err.reason + '<br />' + err.evidence + ' ' + err.line + '</li>'
+					}
+				}
+				$('#lintErrors').html(html);
+			}
+		}
+	});
+});
+</script>
+
 </body>
 </html>

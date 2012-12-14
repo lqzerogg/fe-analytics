@@ -32,6 +32,7 @@ app.configure('development', function(){
 
 app.get('/', routes.index);
 app.get('/edit/:file(*)', file.edit);
+app.post('/lint', file.lint);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));

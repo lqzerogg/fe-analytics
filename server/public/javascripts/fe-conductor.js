@@ -1,5 +1,7 @@
 /*jslint white:true, vars:true, browser:true, forin:true, eqeq:true, unparam:true */
-/*global $,litb */
+
+/*global $, litb */
+
 (function() {
 
 	"use strict";

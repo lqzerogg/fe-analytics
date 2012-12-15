@@ -9,37 +9,52 @@
 <!-- Le styles -->
 <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
 <style type="text/css">
-      body {
-        padding-top: 60px;
-        padding-bottom: 40px;
-      }
-      .per-bar {
-      	height: 1.1em;
-      	background-color: #1a87d5;
-      	float: left;
-      	margin: 0 0.3em 0 0;
-      }
-      .options {
-      	margin: 0;
-      }
-      .options li {
-      	display: inline-block;
-      	margin: 0 20px 0 0;
-      }
-      .dl-horizontal dt {
-      	text-align: left;
-      	width: 100px;
-      }
-      .dl-horizontal dd {
-      	margin-left: 120px;
-      }
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+.per-bar {
+	height: 1.1em;
+	background-color: #1a87d5;
+	float: left;
+	margin: 0 0.3em 0 0;
+}
+.options {
+	margin: 0;
+}
+.options li {
+	display: inline-block;
+	margin: 0 20px 0 0;
+}
+.dl-horizontal dt {
+	text-align: left;
+	width: 100px;
+}
+.dl-horizontal dd {
+	margin-left: 120px;
+}
 
-      #date-range, #date-unit {
-      	margin-right: 30px;
-      }
-      #date-range > label {
-      	margin-right: 10px;
-      }
+#date-range, #date-unit {
+	margin-right: 30px;
+}
+#date-range > label {
+	margin-right: 10px;
+}
+
+#viewMask {
+	margin-top: 10px;
+	position: relative;
+	overflow: hidden;
+}
+
+#switchView {
+	font-size: 12px;
+	color: black;
+	text-decoration: none;
+	line-height: 12px;
+	vertical-align: bottom;
+}
+
 </style>
 <link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
 <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -86,7 +101,7 @@
 		<!--/span-->
 		<div class="span10">
 			<h3>Overview</h3>
-			<div>
+			<div class="clearfix">
 				<div class="btn-toolbar clearfix">
 					<select id="page-type" class="pull-left">
 						<optgroup label="litb">
@@ -127,114 +142,118 @@
 					</div>
 				</div>
 
-					<div id="data-types" class="btn-group pull-left" data-toggle="buttons-checkbox">
-						<button class="btn active">Window Load</button>
-						<button class="btn active">Dom Ready</button>
-						<button class="btn active">Domain Look Up</button>
+				<div id="data-types" class="btn-group pull-left" data-toggle="buttons-checkbox">
+					<button class="btn active">Window Load</button>
+					<button class="btn active">Dom Ready</button>
+					<button class="btn active">Domain Look Up</button>
+				</div>
+
+				<button id="switchView" class="btn btn-link pull-right" title="Switch View"><i class="icon-retweet"></i> Switch View</button>
+			</div>
+
+			<div id="viewMask">
+				<div id="bothViewsWrapper">
+					<div id="plot-view" class="viewWrapper"></div>
+
+					<div class="viewWrapper" style="display: none;">
+						<dl class="dl-horizontal data-dimension">
+							<dt>Location:</dt>
+							<dd>
+								<ul class="options">
+									<li>Country <a href="#"><i class="icon-remove"></i></a></li>
+								</ul>
+							</dd>
+						</dl>
+
+						<dl class="dl-horizontal data-dimension">
+							<dt>Browser &amp; OS:</dt>
+							<dd>
+								<ul class="options">
+									<li>Browser <a href="#"><i class="icon-remove"></i></a></li>
+								</ul>
+							</dd>
+						</dl>
+						<table id="table-view" class="table table-striped">
+							<thead>
+								<tr>
+									<th><button class="btn btn-link">All plot view</button></th>
+									<th>Country</th>
+									<th>Browser</th>
+									<th><a href="#">Domain Look Up</a></th>
+									<th><a href="#">Dom Ready</a></th>
+									<th><a href="#">Window Load</a></th>
+									<th><a href="#">Visits <i class="icon-arrow-down"></i></a></th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td><button class="btn btn-link">plot view</button></td>
+									<td><a href="#">United States</a></td>
+									<td><a href="#">Chrome</a></td>
+									<td>0.5</td>
+									<td>5.2</td>
+									<td>8.6</td>
+									<td>23432</td>
+									<td>
+										<div style="width: 35px;" class="per-bar"></div>
+										<span>35%</span>
+									</td>
+								</tr>
+								<tr>
+									<td><button class="btn btn-link">plot view</button></td>
+									<td><a href="#">France</a></td>
+									<td><a href="#">Firefox</a></td>
+									<td>0.5</td>
+									<td>5.2</td>
+									<td>8.6</td>
+									<td>23432</td>
+									<td>
+										<div style="width: 25px;" class="per-bar"></div>
+										<span>25%</span>
+									</td>
+								</tr>
+								<tr>
+									<td><button class="btn btn-link">plot view</button></td>
+									<td><a href="#">United Kingdom</a></td>
+									<td><a href="#">Chrome</a></td>
+									<td>0.5</td>
+									<td>5.2</td>
+									<td>8.6</td>
+									<td>23432</td>
+									<td>
+										<div style="width: 10px;" class="per-bar"></div>
+										<span>10%</span>
+									</td>
+								</tr>
+								<tr>
+									<td><button class="btn btn-link">plot view</button></td>
+									<td><a href="#">Germany</a></td>
+									<td><a href="#">Chrome</a></td>
+									<td>0.5</td>
+									<td>5.2</td>
+									<td>8.6</td>
+									<td>23432</td>
+									<td>
+										<div style="width: 5px;" class="per-bar"></div>
+										<span>5%</span>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						<!-- div class="pagination pagination-right">
+							<ul>
+								<li class="disabled"><a href="#">&laquo;</a></li>
+								<li class="active"><a href="#">1</a></li>
+								<li><a href="#">2</a></li>
+								<li><a href="#">3</a></li>
+								<li><a href="#">4</a></li>
+								<li><a href="#">5</a></li>
+								<li><a href="#">&raquo;</a></li>
+							</ul>
+						</div -->
 					</div>
-			</div>
-			<div id="plot-view">
-				
-			</div>
-
-			<dl class="dl-horizontal data-dimension">
-				<dt>Location:</dt>
-				<dd>
-					<ul class="options">
-						<li>Country <a href="#"><i class="icon-remove"></i></a></li>
-					</ul>
-				</dd>
-			</dl>
-
-			<dl class="dl-horizontal data-dimension">
-				<dt>Browser &amp; OS:</dt>
-				<dd>
-					<ul class="options">
-						<li>Browser <a href="#"><i class="icon-remove"></i></a></li>
-					</ul>
-				</dd>
-			</dl>
-
-			<div>
-				<table id="table-view" class="table table-striped">
-					<thead>
-						<tr>
-							<th><button class="btn btn-link">All plot view</button></th>
-							<th>Country</th>
-							<th>Browser</th>
-							<th><a href="#">Domain Look Up</a></th>
-							<th><a href="#">Dom Ready</a></th>
-							<th><a href="#">Window Load</a></th>
-							<th><a href="#">Visits <i class="icon-arrow-down"></i></a></th>
-							<th></th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td><button class="btn btn-link">plot view</button></td>
-							<td><a href="#">United States</a></td>
-							<td><a href="#">Chrome</a></td>
-							<td>0.5</td>
-							<td>5.2</td>
-							<td>8.6</td>
-							<td>23432</td>
-							<td>
-								<div style="width: 35px;" class="per-bar"></div>
-								<span>35%</span>
-							</td>
-						</tr>
-						<tr>
-							<td><button class="btn btn-link">plot view</button></td>
-							<td><a href="#">France</a></td>
-							<td><a href="#">Firefox</a></td>
-							<td>0.5</td>
-							<td>5.2</td>
-							<td>8.6</td>
-							<td>23432</td>
-							<td>
-								<div style="width: 25px;" class="per-bar"></div>
-								<span>25%</span>
-							</td>
-						</tr>
-						<tr>
-							<td><button class="btn btn-link">plot view</button></td>
-							<td><a href="#">United Kingdom</a></td>
-							<td><a href="#">Chrome</a></td>
-							<td>0.5</td>
-							<td>5.2</td>
-							<td>8.6</td>
-							<td>23432</td>
-							<td>
-								<div style="width: 10px;" class="per-bar"></div>
-								<span>10%</span>
-							</td>
-						</tr>
-						<tr>
-							<td><button class="btn btn-link">plot view</button></td>
-							<td><a href="#">Germany</a></td>
-							<td><a href="#">Chrome</a></td>
-							<td>0.5</td>
-							<td>5.2</td>
-							<td>8.6</td>
-							<td>23432</td>
-							<td>
-								<div style="width: 5px;" class="per-bar"></div>
-								<span>5%</span>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-				<!-- div class="pagination pagination-right">
-					<ul>
-						<li class="disabled"><a href="#">&laquo;</a></li>
-						<li class="active"><a href="#">1</a></li>
-						<li><a href="#">2</a></li>
-						<li><a href="#">3</a></li>
-						<li><a href="#">4</a></li>
-						<li><a href="#">5</a></li>
-						<li><a href="#">&raquo;</a></li>
-					</ul>
-				</div -->
+				</div>
 			</div>
 			<!--/row-->
 		</div>
@@ -308,7 +327,10 @@ var ONE_DAY = 24 * 3600 * 1000;
 				text: 'FrontEnd Performance'
 			},
 			subtitle: {
-				text: options.dimensions ? options.dimensions : ''
+				text: options.dimensions ? options.dimensions : '',
+            style: {
+                color: '#FF0000'
+            }
 			},
 			xAxis: {
 				type: 'datetime',
@@ -483,16 +505,36 @@ var ONE_DAY = 24 * 3600 * 1000;
 	redrawTable();
 })();
 
+// Init view masking
+$('.viewWrapper').css({
+	'float': 'left',
+	'width': $('#plot-view').width()
+});
+$('#bothViewsWrapper').css({
+	'position': 'absolute',
+	'width': $('#plot-view').width() * 2
+});
+$('#viewMask').css({
+	'height': $('#plot-view').height()
+});
+
 $('#data-types > button, #date-range > button').click(function() {
-	setTimeout(redrawPlot, 200);
-	setTimeout(redrawTable, 200);
+	setTimeout(function() {
+		redrawPlot();
+		redrawTable();
+	}, 200);
 });
 $('#page-type').change(function() {
-	setTimeout(redrawPlot, 200);
-	setTimeout(redrawTable, 200);
+	setTimeout(function() {
+		redrawPlot();
+		redrawTable();
+	}, 200);
 });
 $('#chart-type > button, #date-unit > button').click(function() {
-	setTimeout(redrawPlot, 200);
+	setTimeout(function() {
+		redrawPlot();
+		switchToPlotView();
+	}, 200);
 });
 
 $('.data-dimension li a').live('click', function() {
@@ -508,6 +550,7 @@ $('.data-dimension li a').live('click', function() {
 
 $('#table-view .allPlotViewBtn').live('click', function() {
 	redrawPlot();
+	switchToPlotView();
 });
 
 $('#table-view .plotViewBtn').live('click', function() {
@@ -520,7 +563,33 @@ $('#table-view .plotViewBtn').live('click', function() {
 	}
 
 	redrawPlot({dimensions: dimStr});
-})
+	switchToPlotView();
+});
+
+function switchToPlotView() {
+	$('#viewMask').css({
+		'height': $('.viewWrapper:eq(0)').height()
+	});
+	$('#bothViewsWrapper').animate({'left': 0}, 'fast', function() {
+		$('.viewWrapper:eq(1)').hide();
+	});
+}
+
+function switchToTableView() {
+	$('#viewMask').css({
+		'height': $('.viewWrapper:eq(1)').show().height()
+	});
+	$('#bothViewsWrapper').animate({'left': - $('#bothViewsWrapper').width() / 2}, 'fast');
+}
+
+$('#switchView').click(function() {
+	var curPos = $('#bothViewsWrapper').css('left');
+	if (curPos === '0px' || curPos === 'auto') {
+		switchToTableView();
+	} else {
+		switchToPlotView();
+	}
+});
 </script>
 
 </body>

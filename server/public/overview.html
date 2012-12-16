@@ -26,15 +26,21 @@ body {
 	display: inline-block;
 	margin: 0 20px 0 0;
 }
-.dl-horizontal dt {
-	text-align: left;
-	width: 100px;
-}
-.dl-horizontal dd {
-	margin-left: 120px;
+
+.data-dimension {
+	margin: 20px 0 10px;
 }
 
-#date-range, #date-unit {
+.data-dimension dt {
+	text-align: left;
+	width: auto;
+}
+.data-dimension dd {
+	margin-left: 10px;
+	float: left;
+}
+
+#chart-type, #date-unit {
 	margin-right: 30px;
 }
 #date-range > label {
@@ -120,6 +126,16 @@ body {
 						</optgroup>
 					</select>
 
+					<div id="date-range" class="pull-right">
+						<label class="pull-left">From: 
+							<input id="date-start" type="text" class="input-small" value="09/13/2012" />
+						</label>
+						<label class="pull-left">To:
+							<input id="date-end" type="text" class="input-small" value="10/22/2012" />
+						</label>
+						<button class="btn">accept</button>
+					</div>
+
 					<div id="chart-type" class="btn-group pull-right" data-toggle="buttons-radio">
 						<button class="btn" value="column"><i class="icon-signal"></i></button>
 						<button class="btn active" value="area"><i class="icon-picture"></i></button>
@@ -129,16 +145,6 @@ body {
 						<button class="btn active" value="daily">Day</button>
 						<button class="btn" value="weekly">Week</button>
 						<button class="btn" value="monthly">Month</button>
-					</div>
-
-					<div id="date-range" class="pull-right">
-						<label class="pull-left">From: 
-							<input id="date-start" type="text" class="input-small" value="09/13/2012" />
-						</label>
-						<label class="pull-left">To:
-							<input id="date-end" type="text" class="input-small" value="10/22/2012" />
-						</label>
-						<button class="btn">accept</button>
 					</div>
 				</div>
 
@@ -156,23 +162,25 @@ body {
 					<div id="plot-view" class="viewWrapper"></div>
 
 					<div class="viewWrapper" style="display: none;">
-						<dl class="dl-horizontal data-dimension">
-							<dt>Location:</dt>
-							<dd>
-								<ul class="options">
-									<li>Country <a href="#"><i class="icon-remove"></i></a></li>
-								</ul>
-							</dd>
-						</dl>
+						
+							<dl class="dl-horizontal data-dimension pull-left">
+								<dt>Location:</dt>
+								<dd>
+									<ul class="options">
+										<li>Country</li>
+									</ul>
+								</dd>
+							</dl>
 
-						<dl class="dl-horizontal data-dimension">
-							<dt>Browser &amp; OS:</dt>
-							<dd>
-								<ul class="options">
-									<li>Browser <a href="#"><i class="icon-remove"></i></a></li>
-								</ul>
-							</dd>
-						</dl>
+							<dl class="dl-horizontal data-dimension pull-left">
+								<dt>Browser &amp; OS:</dt>
+								<dd>
+									<ul class="options">
+										<li>Browser</a></li>
+									</ul>
+								</dd>
+							</dl>
+
 						<table id="table-view" class="table table-striped">
 							<thead>
 								<tr>
@@ -287,7 +295,7 @@ var ONE_DAY = 24 * 3600 * 1000;
 		randomBase: {
 			'Domain Look Up': [0, 1000],
 			'Dom Ready': [10000, 15000],
-			'Window Load': [0, 10000]
+			'Window Load': [15000, 25000]
 		},
 		randomValue: function(min, max) {
 			return min + Math.ceil(Math.random() * (max-min));
@@ -348,10 +356,10 @@ var ONE_DAY = 24 * 3600 * 1000;
 			},
 			plotOptions: {
 				column: {
-					stacking: 'normal'
+					//stacking: 'normal'
 				},
 				area: {
-					stacking: 'normal',
+					//stacking: 'normal',
 					marker: {
 						enabled: false,
 						symbol: 'circle',
@@ -448,7 +456,7 @@ var ONE_DAY = 24 * 3600 * 1000;
 			if (options.dimensions) {
 				for (var i = 0; i < options.dimensions.length; i++) {
 					if (m == 0) {
-						theadHtml += '<th>' + options.dimensions[i] + '</th>';
+						theadHtml += '<th>' + options.dimensions[i] + ' <a href="#"><i class="icon-remove"></i></a></th>';
 					}
 					rowHtml += '<td><a href="#">' + options.data[m][options.dimensions[i]] + '</a></td>';
 				}
@@ -481,7 +489,7 @@ var ONE_DAY = 24 * 3600 * 1000;
 		var dimensions = new Array();
 		$.each($('.data-dimension'), function() {
 			$.each($('li', this), function() {
-				if ($('a', this).children('i').length > 0) {
+				if ($('a', this).length === 0) {
 					dimensions.push($.trim($(this).text()));
 				}
 			});
@@ -538,14 +546,20 @@ $('#chart-type > button, #date-unit > button').click(function() {
 });
 
 $('.data-dimension li a').live('click', function() {
-	if ($(this).children('i').length > 0) {
-		var li = $(this).parent();
-		$(this).remove();
-		li.wrapInner('<a href="#" />');
-	} else {
-		$(this).parent().text($(this).text()).append('<a href="#"><i class="icon-remove"></i></a>');
-	}
+	$(this).parent().text($(this).text());
 	setTimeout(redrawTable, 200);
+	return false;
+});
+
+$('#table-view th > a').live('click', function() {
+	var dimStr = $.trim($(this).parent().text());
+	$('.data-dimension li').each(function() {
+		if ($.trim($(this).text()) === dimStr) {
+			$(this).wrapInner('<a href="#" />');
+		}
+	});
+	setTimeout(redrawTable, 200);
+	return false;
 });
 
 $('#table-view .allPlotViewBtn').live('click', function() {
@@ -573,6 +587,7 @@ function switchToPlotView() {
 	$('#bothViewsWrapper').animate({'left': 0}, 'fast', function() {
 		$('.viewWrapper:eq(1)').hide();
 	});
+	$('#date-unit, #chart-type').css({'visibility': 'visible'});
 }
 
 function switchToTableView() {
@@ -580,6 +595,7 @@ function switchToTableView() {
 		'height': $('.viewWrapper:eq(1)').show().height()
 	});
 	$('#bothViewsWrapper').animate({'left': - $('#bothViewsWrapper').width() / 2}, 'fast');
+	$('#date-unit, #chart-type').css({'visibility': 'hidden'});
 }
 
 $('#switchView').click(function() {

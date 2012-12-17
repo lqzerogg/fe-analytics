@@ -27,6 +27,10 @@ body {
 	margin: 0 20px 0 0;
 }
 
+#page-template {
+	margin-left: 10px;
+}
+
 .data-dimension {
 	margin: 20px 0 10px;
 }
@@ -111,20 +115,21 @@ body {
 				<div class="btn-toolbar clearfix">
 					<select id="page-type" class="pull-left">
 						<optgroup label="litb">
-							<option value="index">litb 首页</option>
-							<option value="products_category">litb 品类页</option>
-							<option value="advanced_search_result">litb 搜索结果页</option>
-							<option value="narrow_search">litb narrow search页</option>
-							<option value="product_info">litb 单品页</option>
+							<option value="litb_index">litb 首页</option>
+							<option value="litb_products_category">litb 品类页</option>
+							<option value="litb_advanced_search_result">litb 搜索结果页</option>
+							<option value="litb_narrow_search">litb narrow search页</option>
+							<option value="litb_product_info">litb 单品页</option>
 						</optgroup>
 						<optgroup label="mini">
-							<option value="index">mini 首页</option>
-							<option value="products_category">mini 品类页</option>
-							<option value="advanced_search_result">mini 搜索结果页</option>
-							<option value="narrow_search">mini narrow search页</option>
-							<option value="product_info">mini 单品页</option>
+							<option value="mini_index">mini 首页</option>
+							<option value="mini_products_category">mini 品类页</option>
+							<option value="mini_advanced_search_result">mini 搜索结果页</option>
+							<option value="mini_narrow_search">mini narrow search页</option>
+							<option value="mini_product_info">mini 单品页</option>
 						</optgroup>
 					</select>
+					<select id="page-template" class="pull-left" style="display: none;"></select>
 
 					<div id="date-range" class="pull-right">
 						<label class="pull-left">From: 
@@ -533,6 +538,47 @@ $('#data-types > button, #date-range > button').click(function() {
 	}, 200);
 });
 $('#page-type').change(function() {
+	var pageTemplates = {
+		'products_category': {
+			'20': '分类入口模板(含子类入口)',
+			'21': '子分类推广模板(方/128)',
+			'22': '子分类推广模板(通/方/128/176)',
+			'23': '基础类目模板(通/方/128/176)',
+			'24': '基础类目模板(方/176/List)',
+			'27': '分类入口模板',
+			'28': '子分类推广模板(长/176/240)',
+			'29': '子分类推广模板(通/长/176/240)',
+			'30': '基础类目模板(长/176/240/List)',
+			'33': '特卖会模板(长/176/284)',
+			'34': '特卖会模板(方/176/176)'
+		},
+		'narrow_search': {
+			'25': 'Narrow Search模板(方/176/List)',
+			'26': 'Narrow Search模板(3C/方/176/List)',
+			'31': 'Narrow Search模板(长/176/240/List)',
+			'32': 'Narrow Search模板(3C/长/176/240/List)'
+		},
+		'product_info': {
+			'3': '婚纱礼服',
+			'4': '通用模板',
+			'5': '通用模板(1500)',
+			'6': '婚纱礼服-通栏',
+			'7': '通用模板(数据显示分离)'
+		}
+	};
+
+	var templates = pageTemplates[$(this).val().substring($(this).val().indexOf('_') + 1)],
+		tempId = null,
+		options = '<option value="all">全部</option>';
+	if ( typeof templates !== 'undefined' && templates !== null) {
+		for (tempId in templates) {
+			options += '<option value="' + tempId + '">' + templates[tempId] + '</option>';
+		}
+		$('#page-template').html(options).show();
+	} else {
+		$('#page-template').hide();
+	}
+
 	setTimeout(function() {
 		redrawPlot();
 		redrawTable();
@@ -555,7 +601,7 @@ $('#table-view th > a').live('click', function() {
 	var dimStr = $.trim($(this).parent().text());
 	$('.data-dimension li').each(function() {
 		if ($.trim($(this).text()) === dimStr) {
-			$(this).wrapInner('<a href="#" />');
+			$(this).wrapInner('<a href="#" />').css('backgroundColor', '#ff0').animate({'backgroundColor': '#fff'}, 2000);
 		}
 	});
 	setTimeout(redrawTable, 200);

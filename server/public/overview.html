@@ -10,8 +10,8 @@
 <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
 <style type="text/css">
 body {
-  padding-top: 60px;
-  padding-bottom: 40px;
+	padding-top: 60px;
+	padding-bottom: 40px;
 }
 .per-bar {
 	height: 1.1em;
@@ -44,7 +44,7 @@ body {
 	float: left;
 }
 
-#chart-type, #date-unit {
+#date-unit {
 	margin-right: 30px;
 }
 #date-range > label {
@@ -115,6 +115,7 @@ body {
 				<div class="btn-toolbar clearfix">
 					<select id="page-type" class="pull-left">
 						<optgroup label="litb">
+							<option value="litb_all">litb 全部页面</option>
 							<option value="litb_index">litb 首页</option>
 							<option value="litb_products_category">litb 品类页</option>
 							<option value="litb_advanced_search_result">litb 搜索结果页</option>
@@ -122,6 +123,7 @@ body {
 							<option value="litb_product_info">litb 单品页</option>
 						</optgroup>
 						<optgroup label="mini">
+							<option value="mini_all">mini 全部页面</option>
 							<option value="mini_index">mini 首页</option>
 							<option value="mini_products_category">mini 品类页</option>
 							<option value="mini_advanced_search_result">mini 搜索结果页</option>
@@ -141,19 +143,14 @@ body {
 						<button class="btn">accept</button>
 					</div>
 
-					<div id="chart-type" class="btn-group pull-right" data-toggle="buttons-radio">
-						<button class="btn" value="column"><i class="icon-signal"></i></button>
-						<button class="btn active" value="area"><i class="icon-picture"></i></button>
-					</div>
-
 					<div id="date-unit" class="btn-group pull-right" data-toggle="buttons-radio">
-						<button class="btn active" value="daily">Day</button>
-						<button class="btn" value="weekly">Week</button>
-						<button class="btn" value="monthly">Month</button>
+						<button class="btn active" value="day">Day</button>
+						<button class="btn" value="week">Week</button>
+						<button class="btn" value="month">Month</button>
 					</div>
 				</div>
 
-				<div id="data-types" class="btn-group pull-left" data-toggle="buttons-checkbox">
+				<div id="data-types" class="btn-group pull-left hide" data-toggle="buttons-checkbox">
 					<button class="btn active">Window Load</button>
 					<button class="btn active">Dom Ready</button>
 					<button class="btn active">Domain Look Up</button>
@@ -172,7 +169,7 @@ body {
 								<dt>Location:</dt>
 								<dd>
 									<ul class="options">
-										<li>Country</li>
+										<li><a href="#">Country</a></li>
 									</ul>
 								</dd>
 							</dl>
@@ -181,7 +178,7 @@ body {
 								<dt>Browser &amp; OS:</dt>
 								<dd>
 									<ul class="options">
-										<li>Browser</a></li>
+										<li><a href="#">Browser</a></li>
 									</ul>
 								</dd>
 							</dl>
@@ -289,52 +286,66 @@ body {
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
 <script src="bootstrap/js/bootstrap.js"></script>
 <script src="Highcharts-2.3.3/highcharts.js"></script>
+<script src="javascripts/data.js"></script>
 
 <script>
 $('#date-start, #date-end').datepicker();
 
+function acquireData(options, success) {
+	var startDate = new Date($('#date-start').val()),
+		endDate = new Date($('#date-end').val()),
+		pageType = $('#page-type').val(),
+		pageTemplate = $('#page-template').is(':visible') ? ('-'+$('#page-template').val()) : '';
+	options = $.extend(
+		{
+			startDate: '' + startDate.getFullYear() + (startDate.getMonth()+1) + startDate.getDate(),
+			endDate: '' + endDate.getFullYear() + (endDate.getMonth()+1) + endDate.getDate(),
+			dateUnit: $('#date-unit > .active').val(),
+			site: pageType.substring(0, pageType.indexOf('_')),
+			page: pageType.substring(pageType.indexOf('_') + 1) + pageTemplate,
+			browser: 'all',
+			country: 'all'
+		},
+		options
+	);
+	requirePerformanceData(options, success, function() {
+		alert('Failed acquiring data.');
+	});
+}
+
 var ONE_DAY = 24 * 3600 * 1000;
 
-(function drawPlot() {
-	var dataGenerator = {
-		randomBase: {
-			'Domain Look Up': [0, 1000],
-			'Dom Ready': [10000, 15000],
-			'Window Load': [15000, 25000]
-		},
-		randomValue: function(min, max) {
-			return min + Math.ceil(Math.random() * (max-min));
-		},
-		byInterval: function(type, startDate, endDate, interval) {
-			var data = new Array();
-			while (startDate <= endDate) {
-				data.push({x: startDate.getTime(), y:this.randomValue(this.randomBase[type][0], this.randomBase[type][1])});
-				startDate.setDate(startDate.getDate() + interval);
-			}
-			return data;
-		},
-		daily: function(type, startDate, endDate) {
-			return this.byInterval(type, startDate, endDate, 1);
-		},
-		weekly: function(type, startDate, endDate) {
-			return this.byInterval(type, startDate, endDate, 7);
-		},
-		monthly: function(type, startDate, endDate) {
-			var data = new Array();
-			startDate.setDate(1);
-			while (startDate <= endDate) {
-				data.push({x: startDate.getTime(), y:this.randomValue(this.randomBase[type][0], this.randomBase[type][1])});
-				startDate.setMonth(startDate.getMonth() + 1);
-			}
-			return data;
+(function drawPlot(options) {
+	var series = [{
+			name: 'Window Load',
+			data: []
+		}, {
+			name: 'Dom Ready',
+			data: []
+		}, {
+			name: 'Domain Look Up',
+			data: []
+		}];
+	acquireData(options, function(data) {
+		if (data == null || typeof(data.length) == 'undefined' || data.length == 0) {
+			alert('Invalid data acquired.');
+			return false;
 		}
-	};
+		var i = 0;
+		for (; i < data.length; i++) {
+			var date = data[i].date.split('');
+			date.splice(6, 0, '/');
+			date.splice(4, 0, '/');
+			series[0].data.push({x: date.join(''), y: data[i].domainLookup});
+			series[0].data.push({x: date.join(''), y: data[i].domReady});
+			series[0].data.push({x: date.join(''), y: data[i].load});
+		}
 
-	var draw = function(options){
+		chart.destroy();
 		chart = new Highcharts.Chart({
 			chart: {
 				renderTo: 'plot-view',
-				type: options.chartType ? options.chartType : 'area',
+				type: 'area',
 			},
 			title: {
 				text: 'FrontEnd Performance'
@@ -372,36 +383,20 @@ var ONE_DAY = 24 * 3600 * 1000;
 					}
 				}
 			},
-			series: options.series ? options.series : [{
-				name: 'Window Load',
-				data: dataGenerator.daily('Window Load', new Date($('#date-start').val()), new Date($('#date-end').val()))
-			}, {
-				name: 'Dom Ready',
-				data: dataGenerator.daily('Dom Ready', new Date($('#date-start').val()), new Date($('#date-end').val()))
-			}, {
-				name: 'Domain Look Up',
-				data: dataGenerator.daily('Domain Look Up', new Date($('#date-start').val()), new Date($('#date-end').val()))
-			}]
-		});
-	};
-
-	draw({});
-
-	redrawPlot = function(options) {
-		var series = new Array();
-		$.each($('#data-types > .active'), function() {
-			series.push({
-				name: $(this).text(),
-				data: dataGenerator[$('#date-unit > .active').val()]($(this).text(), new Date($('#date-start').val()), new Date($('#date-end').val()))
-			})
-		});
-		chart.destroy();
-		draw($.extend({
-			chartType: $('#chart-type > .active').val(),
 			series: series
-		}, options));
-	};
-})();
+			// options.series ? options.series : [{
+			// 	name: 'Window Load',
+			// 	data: dataGenerator.daily('Window Load', new Date($('#date-start').val()), new Date($('#date-end').val()))
+			// }, {
+			// 	name: 'Dom Ready',
+			// 	data: dataGenerator.daily('Dom Ready', new Date($('#date-start').val()), new Date($('#date-end').val()))
+			// }, {
+			// 	name: 'Domain Look Up',
+			// 	data: dataGenerator.daily('Domain Look Up', new Date($('#date-start').val()), new Date($('#date-end').val()))
+			// }]
+		});
+	});
+}());
 
 (function drawTable() {
 	var dataGenerator = {
@@ -513,10 +508,16 @@ var ONE_DAY = 24 * 3600 * 1000;
 			dimensions: dimensions,
 			data: data
 		});
+
+		if ($('.viewWrapper:eq(1)').is(':visible')) {
+			$('#viewMask').css({
+				'height': $('.viewWrapper:eq(1)').show().height()
+			});
+		}
 	};
 
 	redrawTable();
-})();
+}());
 
 // Init view masking
 $('.viewWrapper').css({
@@ -569,7 +570,7 @@ $('#page-type').change(function() {
 
 	var templates = pageTemplates[$(this).val().substring($(this).val().indexOf('_') + 1)],
 		tempId = null,
-		options = '<option value="all">全部</option>';
+		options = '<option value="all">全部模板</option>';
 	if ( typeof templates !== 'undefined' && templates !== null) {
 		for (tempId in templates) {
 			options += '<option value="' + tempId + '">' + templates[tempId] + '</option>';
@@ -584,7 +585,7 @@ $('#page-type').change(function() {
 		redrawTable();
 	}, 200);
 });
-$('#chart-type > button, #date-unit > button').click(function() {
+$('#date-unit > button').click(function() {
 	setTimeout(function() {
 		redrawPlot();
 		switchToPlotView();
@@ -601,7 +602,7 @@ $('#table-view th > a').live('click', function() {
 	var dimStr = $.trim($(this).parent().text());
 	$('.data-dimension li').each(function() {
 		if ($.trim($(this).text()) === dimStr) {
-			$(this).wrapInner('<a href="#" />').css('backgroundColor', '#ff0').animate({'backgroundColor': '#fff'}, 2000);
+			$(this).wrapInner('<a href="#" />');
 		}
 	});
 	setTimeout(redrawTable, 200);
@@ -633,7 +634,7 @@ function switchToPlotView() {
 	$('#bothViewsWrapper').animate({'left': 0}, 'fast', function() {
 		$('.viewWrapper:eq(1)').hide();
 	});
-	$('#date-unit, #chart-type').css({'visibility': 'visible'});
+	$('#date-unit').css({'visibility': 'visible'});
 }
 
 function switchToTableView() {
@@ -641,7 +642,7 @@ function switchToTableView() {
 		'height': $('.viewWrapper:eq(1)').show().height()
 	});
 	$('#bothViewsWrapper').animate({'left': - $('#bothViewsWrapper').width() / 2}, 'fast');
-	$('#date-unit, #chart-type').css({'visibility': 'hidden'});
+	$('#date-unit').css({'visibility': 'hidden'});
 }
 
 $('#switchView').click(function() {

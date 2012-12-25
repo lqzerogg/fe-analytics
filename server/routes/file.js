@@ -9,6 +9,11 @@ exports.edit = function(req, res) {
 		title: req.params.file});
 };
 
+exports.save = function(req, res) {
+	fs.writeFileSync(path.normalize(__dirname + '/../public/' + req.params.file), req.body.content, 'utf-8');
+	res.send('');
+};
+
 exports.lint = function(req, res) {
 	res.send(linter.lint(req.body.data).errors);
 };

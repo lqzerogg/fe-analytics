@@ -32,6 +32,7 @@ app.configure('development', function(){
 
 app.get('/', routes.index);
 app.get('/edit/:file(*)', file.edit);
+app.post('/save/:file(*)', file.save);
 app.post('/lint', file.lint);
 
 http.createServer(app).listen(app.get('port'), function(){

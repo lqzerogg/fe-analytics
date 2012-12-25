@@ -8,25 +8,56 @@
 body {
 	padding: 50px;
 }
-#editArea {
+textarea {
 	width: 80%;
+	min-width: 800px;
 	height: 500px;
 	margin-top: 20px;
 	font-family: Monaco;
 }
+
+h1, #prompt {
+	float: left;
+}
+
+#prompt {
+	margin: 24px 30px 0;
+	vertical-align: top;
+	font-size: 20px;
+	color: #AAA;
+}
 </style>
 </head>
 <body>
-	<h1><%= title %></h1>
-	<form action="/save" method="post">
-		<textarea id="editArea"><%= content %></textarea>
+	<div class="clearfix">
+		<h1><%= title %></h1>
+		<div id="prompt"></div>
+	</div>
+	<form>
+		<input type="hidden" name="filename" value="<%= title %>" />
+		<textarea name="content"><%= content %></textarea>
 		<div>
-			<button type="submit" class="btn btn-primary btn-large">Save</button>
-			<button id="lintBtn" type="button" class="btn btn-success btn-large">Lint</button>
+			<button id="lintBtn" type="button" class="btn btn-default btn-large">Lint</button>
+			<a id="deployModalBtn" role="button" class="btn btn-primary btn-large">Minify &amp; Deploy</a>
 		</div>
 	</form>
 
 	<ul id="lintErrors"></ul>
+
+	<div id="deployModal" tabindex="-1" role="dialog" class="modal hide fade" aria-labelledby="myModalLabel" aria-hidden="true">
+		<!-- <div class="modal-header">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+			<h3>Are you sure?</h3>
+		</div> -->
+		<div class="modal-body">
+			<p>Do you really want to deploy <%= title %> to the server?</p>
+		</div>
+		<div class="modal-footer">
+			<span class="hide">Deployed Successfully!</span>
+			<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+			<button id="deployBtn" class="btn btn-primary btn-danger">Deploy</button>
+		</div>
+	</div>
 
 <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css" />
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
@@ -34,18 +65,18 @@ body {
 <script src="/bootstrap/js/bootstrap.js"></script>
 
 <script>
-$('#lintBtn').click(function() {
+function lint(successCb) {
 	$.ajax({
 		url: '/lint',
 		type: 'post',
-		data: {data: $('#editArea').val()},
+		data: {data: $('textarea').val()},
 		error: function() {
 			$('#lintErrors').html('An error occured in jslint.');
 		},
 		success: function(errors) {
 			var i = 0, html = '';
 			if (errors === null || errors.length === 0) {
-				$('#lintErrors').html('Everything is OK.');
+				successCb();
 			} else {
 				for (i in errors) {
 					var err = errors[i];
@@ -57,7 +88,101 @@ $('#lintBtn').click(function() {
 			}
 		}
 	});
+}
+$('#lintBtn').click(function() {
+	lint(function() {
+		$('#lintErrors').html('Everything is OK.');
+	});
 });
+
+$('#deployModalBtn').click(function() {
+	lint(function() {
+		$('#lintErrors').html('');
+		$('#deployModal').modal('show');
+	});
+});
+
+$('#deployModal').on('hidden', function () {
+	$('#deployBtn').attr('disabled', false).show().siblings('span').hide();
+});
+
+
+$('<iframe id="filePoster" src="/iframe/file_poster.html" class="hide"></iframe>').appendTo('body');
+$('#deployBtn').click(function() {
+	$('#deployBtn').attr('disabled', true);
+	$('#filePoster').load(function() {
+		$('#filePoster').remove();
+		$('<iframe id="filePoster" src="/iframe/file_poster.html" class="hide"></iframe>').appendTo('body');
+		$('#deployBtn').hide().siblings('span').show();
+	});
+	var frameForm = window.frames[0].document.forms[0],
+		filename = $('input[name="filename"]').val();
+	$(frameForm).find('input[name="filename"]').val(filename.substring(filename.indexOf('/') + 1));
+	$(frameForm).find('textarea').val($('textarea').val());
+	$(frameForm).submit();
+});
+
+
+/*
+ * Auto save file when content is changed.
+ */
+(function() {
+
+// Post content for saving file.
+function postFile() {
+	$('#prompt').text('Saving...').show();
+	$.ajax({
+		url: '/save/' + $('input[name="filename"]').val(),
+		type: 'post',
+		data: {content: $('textarea').val()},
+		error: function() {
+			alert('An error occured while saving.');
+		},
+		success: function(data) {
+			$('#prompt').text('Updated').fadeOut(2000);
+		}
+	});
+};
+
+var changed = false;
+
+// Check content's changed status every 5 seconds and if true, save the file.
+setInterval(function() {
+	if (changed) {
+		postFile();
+		changed = false;
+	}
+}, 5000);
+
+// Set changed status when there keydown occured.
+$('textarea').keydown(function(e) {
+	if (e.whick > 111) {
+		return;
+	}
+	switch (e.which) {
+		case 9: // tab
+		case 27: // esc
+		case 20: // caps lock
+		case 16: // shift
+		case 17: // control
+		case 18: // alt
+		case 91: // left command | windows
+		case 93: // right command | right click
+		case 33: // page up
+		case 34: // page down
+		case 35: // end
+		case 36: // home
+		case 37: // left
+		case 38: // top
+		case 39: // right
+		case 40: // bottom
+			break;
+		default:
+			changed = true;
+	}
+});
+
+}());
 </script>
 
 </body>

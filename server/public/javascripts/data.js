@@ -12,12 +12,11 @@ function requirePerformanceData(req, success, fail) {
 		}
 	}, 10000);
 	$.getJSON(
-		protocol + 'http://test.webservice.com/index.php?method=vela.item.performance.get?callback=?',
+		protocol + 'test.webservice.com/index.php?method=vela.item.performance.get&callback=?&format=STRING',
 		req,
 		function(resp) {
 			if (timeout != null) {
 				timeout = null;
-				resp = eval('[' + resp + ']')[0];
 				clearTimeout(timeout);
 				PerformanceDataCache.put(req, resp);
 				success(resp);

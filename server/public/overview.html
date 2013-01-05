@@ -153,7 +153,7 @@ body {
 				<div id="data-types" class="btn-group pull-left hide" data-toggle="buttons-checkbox">
 					<button class="btn active">Window Load</button>
 					<button class="btn active">Dom Ready</button>
-					<button class="btn active">Domain Look Up</button>
+					<button class="btn active">Network Latency</button>
 				</div>
 
 				<button id="switchView" class="btn btn-link pull-right" title="Switch View"><i class="icon-retweet"></i> Switch View</button>
@@ -175,7 +175,7 @@ body {
 							</dl>
 
 							<dl class="dl-horizontal data-dimension pull-left">
-								<dt>Browser &amp; OS:</dt>
+								<dt>Browser:</dt>
 								<dd>
 									<ul class="options">
 										<li><a href="#">Browser</a></li>
@@ -189,7 +189,7 @@ body {
 									<th><button class="btn btn-link">All plot view</button></th>
 									<th>Country</th>
 									<th>Browser</th>
-									<th><a href="#">Domain Look Up</a></th>
+									<th><a href="#">Network Latency</a></th>
 									<th><a href="#">Dom Ready</a></th>
 									<th><a href="#">Window Load</a></th>
 									<th><a href="#">Visits <i class="icon-arrow-down"></i></a></th>
@@ -283,12 +283,25 @@ body {
 <!-- Placed at the end of the document so the pages load faster -->
 <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css" />
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="javascripts/jquery.cookie.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
 <script src="bootstrap/js/bootstrap.js"></script>
 <script src="Highcharts-2.3.3/highcharts.js"></script>
 <script src="javascripts/data.js"></script>
 
 <script>
+// Set query.cookie global options
+$.cookie.json = true;
+$.cookie.defaults = {path: '/'};
+
+// Init cookies
+if ($.cookie('browser') == null) {
+	$.cookie('browser', 'all');
+}
+if ($.cookie('country') == null) {
+	$.cookie('country', 'all');
+}
+
 $('#date-start, #date-end').datepicker();
 
 function acquireData(options, success) {
@@ -298,15 +311,14 @@ function acquireData(options, success) {
 		pageTemplate = $('#page-template').is(':visible') ? ('-'+$('#page-template').val()) : '';
 	options = $.extend(
 		{
-			startDate: '' + startDate.getFullYear() + (startDate.getMonth()+1) + startDate.getDate(),
-			endDate: '' + endDate.getFullYear() + (endDate.getMonth()+1) + endDate.getDate(),
-			dateUnit: $('#date-unit > .active').val(),
+			startdate: '' + startDate.getFullYear() + ('0'+(startDate.getMonth()+1)).slice(-2) + startDate.getDate(),
+			enddate: '' + endDate.getFullYear() + ('0'+(endDate.getMonth()+1)).slice(-2) + endDate.getDate(),
+			dateunit: $('#date-unit > .active').val(),
 			site: pageType.substring(0, pageType.indexOf('_')),
 			page: pageType.substring(pageType.indexOf('_') + 1) + pageTemplate,
-			browser: 'all',
-			country: 'all'
-		},
-		options
+			browser: $.cookie('browser'),
+			country: $.cookie('country')
+		}, options
 	);
 	requirePerformanceData(options, success, function() {
 		alert('Failed acquiring data.');
@@ -315,7 +327,7 @@ function acquireData(options, success) {
 
 var ONE_DAY = 24 * 3600 * 1000;
 
-(function drawPlot(options) {
+function drawPlot(options) {
 	var series = [{
 			name: 'Window Load',
 			data: []
@@ -323,7 +335,7 @@ var ONE_DAY = 24 * 3600 * 1000;
 			name: 'Dom Ready',
 			data: []
 		}, {
-			name: 'Domain Look Up',
+			name: 'Network Latency',
 			data: []
 		}];
 	acquireData(options, function(data) {
@@ -333,15 +345,17 @@ var ONE_DAY = 24 * 3600 * 1000;
 		}
 		var i = 0;
 		for (; i < data.length; i++) {
-			var date = data[i].date.split('');
+			var date = (data[i].date+'').split('');
 			date.splice(6, 0, '/');
 			date.splice(4, 0, '/');
-			series[0].data.push({x: date.join(''), y: data[i].domainLookup});
-			series[0].data.push({x: date.join(''), y: data[i].domReady});
-			series[0].data.push({x: date.join(''), y: data[i].load});
+			series[0].data.push({x: date.join(''), y: data[i].networkLatency});
+			series[1].data.push({x: date.join(''), y: data[i].domReady});
+			series[2].data.push({x: date.join(''), y: data[i].load});
 		}
 
-		chart.destroy();
+		if (typeof(chart) !== 'undefined') {
+			chart.destroy();
+		}
 		chart = new Highcharts.Chart({
 			chart: {
 				renderTo: 'plot-view',
@@ -351,7 +365,8 @@ var ONE_DAY = 24 * 3600 * 1000;
 				text: 'FrontEnd Performance'
 			},
 			subtitle: {
-				text: options.dimensions ? options.dimensions : '',
+				text: ((options != null && options.browser != null && options.browser !== 'all') ? ('browser:' + options.browser+' ') : '') +
+						((options != null && options.country != null && options.country !== 'all') ? ('country:' + options.country) : ''),
             style: {
                 color: '#FF0000'
             }
@@ -391,88 +406,110 @@ var ONE_DAY = 24 * 3600 * 1000;
 			// 	name: 'Dom Ready',
 			// 	data: dataGenerator.daily('Dom Ready', new Date($('#date-start').val()), new Date($('#date-end').val()))
 			// }, {
-			// 	name: 'Domain Look Up',
-			// 	data: dataGenerator.daily('Domain Look Up', new Date($('#date-start').val()), new Date($('#date-end').val()))
+			// 	name: 'Network Latency',
+			// 	data: dataGenerator.daily('Network Latency', new Date($('#date-start').val()), new Date($('#date-end').val()))
 			// }]
 		});
 	});
-}());
+};
+
+drawPlot();
 
 (function drawTable() {
 	var dataGenerator = {
 		dimensions: {
-			Country: [ 'United States', 'France', 'Germany', 'Spain', 'Brazil', 'Portugal' ],
-			Browser: [ 'Chrome', 'Firefox', 'Internet Explorer' ]
+			country: [ 'us', 'fr', 'de', 'es', 'br', 'pt' ],
+			browser: [ 'chrome-all', 'firefox-all', 'ie-all' ],
+			browserVersion: [ 'chrome-23', 'chrome-22', 'firefox-17', 'firefox-16', 'ie-10', 'ie-9' ]
 		},
-		randomBase: {
-			'Domain Look Up': [0, 1000],
-			'Dom Ready': [10000, 15000],
-			'Window Load': [15000, 25000],
-			'Visits': [20000, 50000]
-		},
-		randomValue: function(min, max) {
-			return min + Math.ceil(Math.random() * (max-min));
-		},
-		singleResult: function(types) {
-			if (!types || types.length == 0) {
-				return new Object();
-			}
-			var result = new Object();
-			for (var i = 0; i < types.length; i++) {
-				result[types[i]] = this.randomValue(this.randomBase[types[i]][0], this.randomBase[types[i]][1]);
-			}
-			return result;
-		},
-		getData: function(types, dimensions) {
-			var data = new Array();
+		getData: function(dimensions) {
+			var data = new Array(), result = new Array(), dims = dimensions,
+				i = 0, j = 0, k = 0;
 			if (dimensions && dimensions.length > 0) {
 				data.push(new Object());
-				for (var i = 0; i < dimensions.length; i++) {
+				for (; i < dimensions.length; i++) {
 					var temp = new Array();
-					for (var j = 0; j < this.dimensions[dimensions[i]].length; j++) {
-						for (var k = 0; k < data.length; k++) {
+					for (; j < this.dimensions[dimensions[i]].length; j++) {
+						for (; k < data.length; k++) {
 							var obj = new Object();
-							obj[dimensions[i]] = this.dimensions[dimensions[i]][j];
+							if (dimensions[i] === 'browserVersion') {
+								obj['browser'] = this.dimensions[dimensions[i]][j];
+							} else {
+								obj[dimensions[i]] = this.dimensions[dimensions[i]][j];
+							}
 							temp.push($.extend(obj, data[k]));
 						}
 					}
 					data = temp;
 				}
-				for (var i = 0; i < data.length; i++) {
-					data[i] = $.extend(data[i], this.singleResult(types));
+				for (i = 0; i < data.length; i++) {
+					acquireData($.extend({dateunit: 'all'}, data[i]), function(resp) {
+						if (resp['browser'] !== 'all') {
+							if (resp['browser'].indexOf('all') > -1) {
+								resp['version'] = resp['browser'].substring(resp['browser'].indexOf('-') + 1);
+								resp['browser'] = resp['browser'].substring(0, resp['browser'].indexOf('-'));
+							}
+						}
+						result.push(resp);
+						// All requires have returned.
+						if (resp.length === data.length) {
+							toDraw(dims, resp);
+						}
+					});
 				}
 			} else {
-				data.push(this.singleResult(types));
+				acquireData({dateunit: 'all'}, function(resp) {
+					toDraw(dims, resp);
+				});
 			}
 			return data;
 		}
 	};
 
-	var draw = function(options){
+	var toDraw = function(dimensions, data) {
+		var allVisits = 0, m = 0;
+		for (; m < data.length; m++) {
+			allVisits += data[m]['count'];
+		}
+		for (m = 0; m < data.length; m++) {
+			data[m]['Proportion'] = Math.round(data[m]['count'] / allVisits * 100);
+		}
+		if (dimensions.indexOf('browserVersion') > -1) {
+			dimensions.slice(dimensions.indexOf('browserVersion'));
+			dimensions.push('Browser');
+			dimensions.push('Version');
+		}
+		draw(dimensions, data);
+
+		if ($('.viewWrapper:eq(1)').is(':visible')) {
+			$('#viewMask').css({
+				'height': $('.viewWrapper:eq(1)').show().height()
+			});
+		}
+	};
+
+	var draw = function(dimensions, data){
 		var theadHtml = '<tr><th><button class="btn btn-link allPlotViewBtn">All plot view</button></th>',
 			tbodyHtml = '';
-		for (var m = 0; m < options.data.length; m++) {
+		for (var m = 0; m < data.length; m++) {
 			var rowHtml = '<tr><td><button class="btn btn-link plotViewBtn">plot view</button></td>';
-			if (options.dimensions) {
-				for (var i = 0; i < options.dimensions.length; i++) {
+			if (dimensions) {
+				for (var i = 0; i < dimensions.length; i++) {
 					if (m == 0) {
-						theadHtml += '<th>' + options.dimensions[i] + ' <a href="#"><i class="icon-remove"></i></a></th>';
+						theadHtml += '<th>' + dimensions[i] + ' <a href="#"><i class="icon-remove"></i></a></th>';
 					}
-					rowHtml += '<td><a href="#">' + options.data[m][options.dimensions[i]] + '</a></td>';
+					rowHtml += '<td>' + data[m][dimensions[i].toLowerCase()] + '</td>';
 				}
 			}
-			if (options.types) {
-				for (var i = 0; i < options.types.length; i++) {
-					if (m == 0) {
-						theadHtml += '<th><a href="#">' + options.types[i] + '</a></th>';
-					}
-					rowHtml += '<td>' + options.data[m][options.types[i]] + '</td>';
-				}
-			}
+
 			if (m == 0) {
-				theadHtml += '<th>Proportion</th>';
+				theadHtml += '<th>Network Latency</th><th>Dom Ready</th><th>Window Load</th><th>Visits</th><th>Proportion</th>';
 			}
-			rowHtml += '<td><div style="width: ' + options.data[m]['Proportion'] + 'px;" class="per-bar"></div><span>' + options.data[m]['Proportion'] + '%</span></td>';
+			rowHtml += '<td>' + data[m]['networkLatency'] + '</td>' +
+							'<td>' + data[m]['domReady'] + '</td>' +
+							'<td>' + data[m]['load'] + '</td>' +
+							'<td>' + data[m]['count'] + '</td>' +
+							'<td><div style="width: ' + data[m]['Proportion'] + 'px;" class="per-bar"></div><span>' + data[m]['Proportion'] + '%</span></td>';
 
 			tbodyHtml += rowHtml + '</tr>';
 		}
@@ -481,11 +518,6 @@ var ONE_DAY = 24 * 3600 * 1000;
 	};
 
 	redrawTable = function() {
-		var types = new Array();
-		$.each($('#data-types > .active'), function() {
-			types.push($(this).text());
-		});
-		types.push('Visits');
 		var dimensions = new Array();
 		$.each($('.data-dimension'), function() {
 			$.each($('li', this), function() {
@@ -495,25 +527,7 @@ var ONE_DAY = 24 * 3600 * 1000;
 			});
 		});
 
-		var data = dataGenerator.getData(types, dimensions),
-			allVisits = 0;
-		for (var m = 0; m < data.length; m++) {
-			allVisits += data[m]['Visits'];
-		}
-		for (var m = 0; m < data.length; m++) {
-			data[m]['Proportion'] = Math.round(data[m]['Visits'] / allVisits * 100);
-		}
-		draw({
-			types: types,
-			dimensions: dimensions,
-			data: data
-		});
-
-		if ($('.viewWrapper:eq(1)').is(':visible')) {
-			$('#viewMask').css({
-				'height': $('.viewWrapper:eq(1)').show().height()
-			});
-		}
+		dataGenerator.getData(dimensions);
 	};
 
 	redrawTable();
@@ -534,7 +548,7 @@ $('#viewMask').css({
 
 $('#data-types > button, #date-range > button').click(function() {
 	setTimeout(function() {
-		redrawPlot();
+		drawPlot();
 		redrawTable();
 	}, 200);
 });
@@ -581,13 +595,13 @@ $('#page-type').change(function() {
 	}
 
 	setTimeout(function() {
-		redrawPlot();
+		drawPlot();
 		redrawTable();
 	}, 200);
 });
 $('#date-unit > button').click(function() {
 	setTimeout(function() {
-		redrawPlot();
+		drawPlot();
 		switchToPlotView();
 	}, 200);
 });
@@ -610,20 +624,19 @@ $('#table-view th > a').live('click', function() {
 });
 
 $('#table-view .allPlotViewBtn').live('click', function() {
-	redrawPlot();
+	drawPlot();
 	switchToPlotView();
 });
 
 $('#table-view .plotViewBtn').live('click', function() {
-	var dimStr = '',
+	var dim = new Object(),
 		dimElems = $(this).parent().siblings().children('a');
 	for (var i = 0; i < dimElems.length; i++) {
 		var idx = $(dimElems[i]).parents('tr').children().index($(dimElems[i]).parent());
-		dimStr += $('#table-view > thead > tr > th:eq('+idx+')').text() + ': ';
-		dimStr += $(dimElems[i]).text() + ' ';
+		dim[$('#table-view > thead > tr > th:eq('+idx+')').text().toLowerCase()] = $(dimElems[i]).text();
 	}
 
-	redrawPlot({dimensions: dimStr});
+	drawPlot(dim);
 	switchToPlotView();
 });
 

@@ -135,10 +135,10 @@ body {
 
 					<div id="date-range" class="pull-right">
 						<label class="pull-left">From: 
-							<input id="date-start" type="text" class="input-small" value="09/13/2012" />
+							<input id="date-start" type="text" class="input-small" value="01/01/2013" />
 						</label>
 						<label class="pull-left">To:
-							<input id="date-end" type="text" class="input-small" value="10/22/2012" />
+							<input id="date-end" type="text" class="input-small" value="01/05/2013" />
 						</label>
 						<button class="btn">accept</button>
 					</div>
@@ -311,8 +311,8 @@ function acquireData(options, success) {
 		pageTemplate = $('#page-template').is(':visible') ? ('-'+$('#page-template').val()) : '';
 	options = $.extend(
 		{
-			startdate: '' + startDate.getFullYear() + ('0'+(startDate.getMonth()+1)).slice(-2) + startDate.getDate(),
-			enddate: '' + endDate.getFullYear() + ('0'+(endDate.getMonth()+1)).slice(-2) + endDate.getDate(),
+			startdate: '' + startDate.getFullYear() + ('0'+(startDate.getMonth()+1)).slice(-2) + ('0' + startDate.getDate()).slice(-2),
+			enddate: '' + endDate.getFullYear() + ('0'+(endDate.getMonth()+1)).slice(-2) + ('0' + endDate.getDate()).slice(-2),
 			dateunit: $('#date-unit > .active').val(),
 			site: pageType.substring(0, pageType.indexOf('_')),
 			page: pageType.substring(pageType.indexOf('_') + 1) + pageTemplate,

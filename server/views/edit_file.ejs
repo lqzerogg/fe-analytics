@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <title><%= title %></title>
-<link rel="stylesheet" href="/bootstrap/css/bootstrap.css">
+<link rel="stylesheet" href="bootstrap/css/bootstrap.css">
 <style>
 body {
 	padding: 50px;
@@ -62,7 +62,7 @@ h1, #prompt {
 <link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery-ui.css" />
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
-<script src="/bootstrap/js/bootstrap.js"></script>
+<script src="bootstrap/js/bootstrap.js"></script>
 
 <script>
 function lint(successCb) {
@@ -107,12 +107,12 @@ $('#deployModal').on('hidden', function () {
 });
 
 
-$('<iframe id="filePoster" src="/iframe/file_poster.html" class="hide"></iframe>').appendTo('body');
+$('<iframe id="filePoster" src="iframe/file_poster.html" class="hide"></iframe>').appendTo('body');
 $('#deployBtn').click(function() {
 	$('#deployBtn').attr('disabled', true);
 	$('#filePoster').load(function() {
 		$('#filePoster').remove();
-		$('<iframe id="filePoster" src="/iframe/file_poster.html" class="hide"></iframe>').appendTo('body');
+		$('<iframe id="filePoster" src="iframe/file_poster.html" class="hide"></iframe>').appendTo('body');
 		$('#deployBtn').hide().siblings('span').show();
 	});
 	var frameForm = window.frames[0].document.forms[0],

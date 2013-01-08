@@ -327,7 +327,7 @@ function acquireData(options, success) {
 
 var ONE_DAY = 24 * 3600 * 1000;
 
-function drawPlot(options) {
+function drawPlot(options, done) {
 	var series = [{
 			name: 'Window Load',
 			data: []
@@ -348,9 +348,9 @@ function drawPlot(options) {
 			var date = (data[i].date+'').split('');
 			date.splice(6, 0, '/');
 			date.splice(4, 0, '/');
-			series[0].data.push({x: date.join(''), y: data[i].networkLatency});
-			series[1].data.push({x: date.join(''), y: data[i].domReady});
-			series[2].data.push({x: date.join(''), y: data[i].load});
+			series[0].data.push({x: new Date(date.join('')).getTime(), y: data[i].load});
+			series[1].data.push({x: new Date(date.join('')).getTime(), y: data[i].domReady});
+			series[2].data.push({x: new Date(date.join('')).getTime(), y: data[i].networkLatency});
 		}
 
 		if (typeof(chart) !== 'undefined') {
@@ -399,21 +399,14 @@ function drawPlot(options) {
 				}
 			},
 			series: series
-			// options.series ? options.series : [{
-			// 	name: 'Window Load',
-			// 	data: dataGenerator.daily('Window Load', new Date($('#date-start').val()), new Date($('#date-end').val()))
-			// }, {
-			// 	name: 'Dom Ready',
-			// 	data: dataGenerator.daily('Dom Ready', new Date($('#date-start').val()), new Date($('#date-end').val()))
-			// }, {
-			// 	name: 'Network Latency',
-			// 	data: dataGenerator.daily('Network Latency', new Date($('#date-start').val()), new Date($('#date-end').val()))
-			// }]
 		});
+		if (done) {
+			done.call();
+		}
 	});
 };
 
-drawPlot();
+drawPlot({}, switchToPlotView);
 
 (function drawTable() {
 	var dataGenerator = {
@@ -422,20 +415,20 @@ drawPlot();
 			browser: [ 'chrome-all', 'firefox-all', 'ie-all' ],
 			browserVersion: [ 'chrome-23', 'chrome-22', 'firefox-17', 'firefox-16', 'ie-10', 'ie-9' ]
 		},
-		getData: function(dimensions) {
-			var data = new Array(), result = new Array(), dims = dimensions,
+		getData: function(dims) {
+			var data = new Array(), result = new Array(),
 				i = 0, j = 0, k = 0;
-			if (dimensions && dimensions.length > 0) {
+			if (dims && dims.length > 0) {
 				data.push(new Object());
-				for (; i < dimensions.length; i++) {
+				for (; i < dims.length; i++) {
 					var temp = new Array();
-					for (; j < this.dimensions[dimensions[i]].length; j++) {
-						for (; k < data.length; k++) {
+					for (j = 0; j < this.dimensions[dims[i].toLowerCase()].length; j++) {
+						for (k = 0; k < data.length; k++) {
 							var obj = new Object();
-							if (dimensions[i] === 'browserVersion') {
-								obj['browser'] = this.dimensions[dimensions[i]][j];
+							if (dims[i] === 'browserVersion') {
+								obj['browser'] = this.dimensions[dims[i].toLowerCase()][j];
 							} else {
-								obj[dimensions[i]] = this.dimensions[dimensions[i]][j];
+								obj[dims[i].toLowerCase()] = this.dimensions[dims[i].toLowerCase()][j];
 							}
 							temp.push($.extend(obj, data[k]));
 						}
@@ -444,16 +437,16 @@ drawPlot();
 				}
 				for (i = 0; i < data.length; i++) {
 					acquireData($.extend({dateunit: 'all'}, data[i]), function(resp) {
-						if (resp['browser'] !== 'all') {
-							if (resp['browser'].indexOf('all') > -1) {
-								resp['version'] = resp['browser'].substring(resp['browser'].indexOf('-') + 1);
-								resp['browser'] = resp['browser'].substring(0, resp['browser'].indexOf('-'));
+						if (resp[0]['browser'] !== 'all') {
+							if (resp[0]['browser'].indexOf('all') > -1) {
+								//resp[0]['version'] = resp[0]['browser'].substring(resp[0]['browser'].indexOf('-') + 1);
+								//resp[0]['browser'] = resp[0]['browser'].substring(0, resp[0]['browser'].indexOf('-'));
 							}
 						}
-						result.push(resp);
+						result.push(resp[0]);
 						// All requires have returned.
-						if (resp.length === data.length) {
-							toDraw(dims, resp);
+						if (result.length === data.length) {
+							toDraw(dims, result);
 						}
 					});
 				}
@@ -469,7 +462,7 @@ drawPlot();
 	var toDraw = function(dimensions, data) {
 		var allVisits = 0, m = 0;
 		for (; m < data.length; m++) {
-			allVisits += data[m]['count'];
+			allVisits += parseInt(data[m]['count']);
 		}
 		for (m = 0; m < data.length; m++) {
 			data[m]['Proportion'] = Math.round(data[m]['count'] / allVisits * 100);
@@ -498,12 +491,12 @@ drawPlot();
 					if (m == 0) {
 						theadHtml += '<th>' + dimensions[i] + ' <a href="#"><i class="icon-remove"></i></a></th>';
 					}
-					rowHtml += '<td>' + data[m][dimensions[i].toLowerCase()] + '</td>';
+					rowHtml += '<td><em>' + data[m][dimensions[i].toLowerCase()] + '</em></td>';
 				}
 			}
 
 			if (m == 0) {
-				theadHtml += '<th>Network Latency</th><th>Dom Ready</th><th>Window Load</th><th>Visits</th><th>Proportion</th>';
+				theadHtml += '<th>Network Latency(ms)</th><th>Dom Ready(ms)</th><th>Window Load(ms)</th><th>Visits</th><th>Proportion</th>';
 			}
 			rowHtml += '<td>' + data[m]['networkLatency'] + '</td>' +
 							'<td>' + data[m]['domReady'] + '</td>' +
@@ -599,10 +592,15 @@ $('#page-type').change(function() {
 		redrawTable();
 	}, 200);
 });
-$('#date-unit > button').click(function() {
+$('#page-template').live('change', function() {
 	setTimeout(function() {
 		drawPlot();
-		switchToPlotView();
+		redrawTable();
+	}, 200);
+});
+$('#date-unit > button').click(function() {
+	setTimeout(function() {
+		drawPlot({}, switchToPlotView);
 	}, 200);
 });
 
@@ -624,20 +622,17 @@ $('#table-view th > a').live('click', function() {
 });
 
 $('#table-view .allPlotViewBtn').live('click', function() {
-	drawPlot();
-	switchToPlotView();
+	drawPlot({}, switchToPlotView);
 });
 
 $('#table-view .plotViewBtn').live('click', function() {
 	var dim = new Object(),
-		dimElems = $(this).parent().siblings().children('a');
+		dimElems = $(this).parent().siblings().children('em');
 	for (var i = 0; i < dimElems.length; i++) {
 		var idx = $(dimElems[i]).parents('tr').children().index($(dimElems[i]).parent());
-		dim[$('#table-view > thead > tr > th:eq('+idx+')').text().toLowerCase()] = $(dimElems[i]).text();
+		dim[$('#table-view > thead > tr > th:eq('+idx+')').text().toLowerCase().trim()] = $(dimElems[i]).text();
 	}
-
-	drawPlot(dim);
-	switchToPlotView();
+	drawPlot(dim, switchToPlotView);
 });
 
 function switchToPlotView() {

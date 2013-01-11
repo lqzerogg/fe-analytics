@@ -29,15 +29,16 @@ function requirePerformanceData(req, success, fail) {
 // Object items is not ordered as they were declared for non-numerical key
 // refer: http://stackoverflow.com/questions/280713/elements-order-in-a-for-in-loop
 function jsonToSortedArray(obj) {
-	var sorted = [], keys = [], key;
+	var sorted = [], keys = [], key, i;
 	for (key in obj) {
 		keys.push(key);
 	}
-	keys.sort().forEach(function(name) {
+	keys = keys.sort();
+	for (i in keys) {
 		var item = {};
-		item[name] = obj[name];
+		item[keys[i]] = obj[keys[i]];
 		sorted[sorted.length] = item;
-	});
+	}
 	return sorted;
 };
 

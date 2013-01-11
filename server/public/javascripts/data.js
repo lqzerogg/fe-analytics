@@ -25,20 +25,16 @@ function requirePerformanceData(req, success, fail) {
 	);
 };
 
-// Sort object by keys and export to an array
+// Sort object by keys and export to an array, not supported before ie9
 // Object items is not ordered as they were declared for non-numerical key
 // refer: http://stackoverflow.com/questions/280713/elements-order-in-a-for-in-loop
 function jsonToSortedArray(obj) {
-	var sorted = [], keys = [], key, i;
-	for (key in obj) {
-		keys.push(key);
-	}
-	keys = keys.sort();
-	for (i in keys) {
+	var sorted = [];
+	Object.keys(obj).sort().forEach(function(name) {
 		var item = {};
-		item[keys[i]] = obj[keys[i]];
+		item[name] = obj[name];
 		sorted[sorted.length] = item;
-	}
+	});
 	return sorted;
 };
 

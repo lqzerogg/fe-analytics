@@ -2,14 +2,7 @@
 <div class="container-fluid">
 	<div class="row-fluid">
 		<div class="span2">
-			<div class="well sidebar-nav">
-				<ul class="nav nav-list">
-					<li class="nav-header active"><a href="#">Overview</a></li>
-					<!-- li><a href="#">Browser &amp; OS</a></li -->
-					<!-- li><a href="location.html">Location</a></li -->
-				</ul>
-			</div>
-			<!--/.well -->
+			<% include nav %>
 		</div>
 		<!--/span-->
 		<div class="span10">
@@ -229,6 +222,7 @@ function acquireData(options, success) {
 }
 
 var ONE_DAY = 24 * 3600 * 1000,
+	EIGHT_HOURS = 8 * 3600 * 1000,
 	// countries full name for displaying
 	country_names = {'fr':'France', 'us':'United States', 'it':'Italy', 'es':'Spain', 'gb':'United Kingdom', 'br':'Brazil', 'dk':'Denmark', 'de':'Germany', 'nl':'Netherlands', 'no':'Norway', 'au':'Australia', 'be':'Belgium', 'se':'Sweden', 'ca':'Canada', 'ru':'Russian Federation', 'ch':'Switzerland', 'ie':'Ireland', 'at':'Austria', 'pt':'Portugal', 'gr':'Greece'};
 
@@ -244,6 +238,12 @@ function drawPlot(options, done) {
 			data: []
 		}];
 	acquireData(options, function(data) {
+		if (options && options.browser) {
+			$.cookie('browser', options.browser);
+		}
+		if (options && options.country) {
+			$.cookie('country', options.country);
+		}
 		if (data == null || typeof(data.length) == 'undefined' || data.length == 0) {
 			alert('Invalid data acquired.');
 			return false;
@@ -253,9 +253,9 @@ function drawPlot(options, done) {
 			var date = (data[i].date+'').split('');
 			date.splice(6, 0, '/');
 			date.splice(4, 0, '/');
-			series[0].data.push({x: new Date(date.join('')).getTime(), y: data[i].load});
-			series[1].data.push({x: new Date(date.join('')).getTime(), y: data[i].domReady});
-			series[2].data.push({x: new Date(date.join('')).getTime(), y: data[i].networkLatency});
+			series[0].data.push({x: new Date(date.join('')).getTime() + EIGHT_HOURS, y: data[i].load});
+			series[1].data.push({x: new Date(date.join('')).getTime() + EIGHT_HOURS, y: data[i].domReady});
+			series[2].data.push({x: new Date(date.join('')).getTime() + EIGHT_HOURS, y: data[i].networkLatency});
 		}
 
 		if (typeof(chart) !== 'undefined') {
@@ -270,8 +270,8 @@ function drawPlot(options, done) {
 				text: 'FrontEnd Performance'
 			},
 			subtitle: {
-				text: ((options != null && options.browser != null && options.browser !== 'all') ? ('browser:' + options.browser+' ') : '') +
-						((options != null && options.country != null && options.country !== 'all') ? ('country:' + country_names[options.country]) : ''),
+				text: (($.cookie('browser') !== 'all') ? ('browser:' + $.cookie('browser')+' ') : '') +
+						(($.cookie('country') !== 'all') ? ('country:' + country_names[$.cookie('country')]) : ''),
             style: {
                 color: '#FF0000'
             }
@@ -531,7 +531,7 @@ $('#table-view th > a').live('click', function() {
 });
 
 $('#table-view .allPlotViewBtn').live('click', function() {
-	drawPlot({}, switchToPlotView);
+	drawPlot({country: 'all', browser: 'all'}, switchToPlotView);
 });
 
 $('#table-view .plotViewBtn').live('click', function() {

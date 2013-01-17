@@ -75,6 +75,7 @@
 								<dd>
 									<ul class="options">
 										<li><a href="#">Browser</a></li>
+										<li><a href="#">Browser &amp; Version</a></li>
 									</ul>
 								</dd>
 							</dl>
@@ -191,14 +192,19 @@ $.cookie.json = true;
 $.cookie.defaults = {path: '/'};
 
 // Init cookies
-if ($.cookie('browser') == null) {
+// if ($.cookie('browser') == null) {
 	$.cookie('browser', 'all');
-}
-if ($.cookie('country') == null) {
+// }
+// if ($.cookie('country') == null) {
 	$.cookie('country', 'all');
-}
+// }
 
 $('#date-start, #date-end').datepicker();
+var today = new Date();
+today.setDate(today.getDate() - 2);
+$('#date-end').val( ('0'+(today.getMonth()+1)).slice(-2) + '/' + ('0' + today.getDate()).slice(-2) + '/' + today.getFullYear());
+today.setDate(today.getDate() - 15);
+$('#date-start').val( ('0'+(today.getMonth()+1)).slice(-2) + '/' + ('0' + today.getDate()).slice(-2) + '/' + today.getFullYear());
 
 function acquireData(options, success) {
 	var startDate = new Date($('#date-start').val()),
@@ -238,7 +244,9 @@ function drawPlot(options, done) {
 			data: []
 		}];
 	acquireData(options, function(data) {
-		if (options && options.browser) {
+		if (options && options['browser & version']) {
+			$.cookie('browser', options['browser & version']);
+		} else if (options && options.browser) {
 			$.cookie('browser', options.browser);
 		}
 		if (options && options.country) {
@@ -270,7 +278,7 @@ function drawPlot(options, done) {
 				text: 'FrontEnd Performance'
 			},
 			subtitle: {
-				text: (($.cookie('browser') !== 'all') ? ('browser:' + $.cookie('browser')+' ') : '') +
+				text: (($.cookie('browser') !== 'all') ? ('browser:' + ($.cookie('browser').indexOf('all') === -1 ? $.cookie('browser') : $.cookie('browser').replace('-all', '') )+' ') : '') +
 						(($.cookie('country') !== 'all') ? ('country:' + country_names[$.cookie('country')]) : ''),
             style: {
                 color: '#FF0000'
@@ -316,9 +324,9 @@ drawPlot({}, switchToPlotView);
 (function drawTable() {
 	var dataGenerator = {
 		dimensions: {
-			country: [ 'fr', 'us', 'it', 'es', 'gb', 'br', 'dk', 'de', 'nl', 'no', 'au', 'be', 'se', 'ca', 'ru', 'ch', 'ie', 'at', 'pt', 'gr'],
-			browser: [ 'chrome-all', 'firefox-all', 'ie-all' ],
-			browserVersion: [ 'chrome-23', 'chrome-22', 'firefox-17', 'firefox-16', 'ie-10', 'ie-9' ]
+			'country': ['fr', 'us', 'it', 'es', 'gb', 'br', 'dk', 'de', 'nl', 'no', 'au', 'be', 'se', 'ca', 'ru', 'ch', 'ie', 'at', 'pt', 'gr'],
+			'browser': ['chrome-all', 'firefox-all', 'ie-all'],
+			'browser & version': ['chrome-24', 'chrome-23', 'chrome-22', 'firefox-17', 'firefox-16', 'ie-10', 'ie-9']
 		},
 		getData: function(dims) {
 			var data = new Array(), result = new Array(),
@@ -330,7 +338,7 @@ drawPlot({}, switchToPlotView);
 					for (j = 0; j < this.dimensions[dims[i].toLowerCase()].length; j++) {
 						for (k = 0; k < data.length; k++) {
 							var obj = new Object();
-							if (dims[i] === 'browserVersion') {
+							if (dims[i].toLowerCase() === 'browser & version') {
 								obj['browser'] = this.dimensions[dims[i].toLowerCase()][j];
 							} else {
 								obj[dims[i].toLowerCase()] = this.dimensions[dims[i].toLowerCase()][j];
@@ -372,11 +380,6 @@ drawPlot({}, switchToPlotView);
 		for (m = 0; m < data.length; m++) {
 			data[m]['Proportion'] = Math.round(data[m]['count'] / allVisits * 100);
 		}
-		if (dimensions.indexOf('browserVersion') > -1) {
-			dimensions.slice(dimensions.indexOf('browserVersion'));
-			dimensions.push('Browser');
-			dimensions.push('Version');
-		}
 		draw(dimensions, data);
 
 		if ($('.viewWrapper:eq(1)').is(':visible')) {
@@ -397,9 +400,11 @@ drawPlot({}, switchToPlotView);
 						theadHtml += '<th>' + dimensions[i] + ' <a href="#"><i class="icon-remove"></i></a></th>';
 					}
 					if (dimensions[i].toLowerCase() === 'country') {
-						rowHtml += '<td><em value="' + data[m][dimensions[i].toLowerCase()] + '">' + country_names[data[m][dimensions[i].toLowerCase()]] + '</em></td>';
-					} else {
-						rowHtml += '<td><em value="' + data[m][dimensions[i].toLowerCase()] + '">' + data[m][dimensions[i].toLowerCase()] + '</em></td>';
+						rowHtml += '<td><em data-value="' + data[m][dimensions[i].toLowerCase()] + '">' + country_names[data[m][dimensions[i].toLowerCase()]] + '</em></td>';
+					} else if (dimensions[i].toLowerCase() === 'browser') {
+						rowHtml += '<td><em data-value="' + data[m][dimensions[i].toLowerCase()] + '">' + data[m][dimensions[i].toLowerCase()].replace('-all', '') + '</em></td>';
+					} else if (dimensions[i].toLowerCase() === 'browser & version') {
+						rowHtml += '<td><em data-value="' + data[m]['browser'] + '">' + data[m]['browser'] + '</em></td>';
 					}
 				}
 			}
@@ -514,6 +519,11 @@ $('#date-unit > button').click(function() {
 });
 
 $('.data-dimension li a').live('click', function() {
+	if ($(this).text() === 'Browser') {
+		$(this).parent().next().html('<a href="#">Browser & Version</a>');
+	} else if ($(this).text() === 'Browser & Version') {
+		$(this).parent().prev().html('<a href="#">Browser</a>');
+	}
 	$(this).parent().text($(this).text());
 	setTimeout(redrawTable, 200);
 	return false;
@@ -539,9 +549,9 @@ $('#table-view .plotViewBtn').live('click', function() {
 		dimElems = $(this).parent().siblings().children('em');
 	for (var i = 0; i < dimElems.length; i++) {
 		var idx = $(dimElems[i]).parents('tr').children().index($(dimElems[i]).parent());
-		dim[$('#table-view > thead > tr > th:eq('+idx+')').text().toLowerCase().trim()] = $(dimElems[i]).attr('value');
+		dim[$('#table-view > thead > tr > th:eq('+idx+')').text().toLowerCase().trim()] = $(dimElems[i]).attr('data-value');
 	}
-	drawPlot(dim, switchToPlotView);
+	drawPlot($.extend({'country':'all', 'browser': 'all'}, dim), switchToPlotView);
 });
 
 function switchToPlotView() {

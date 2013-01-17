@@ -2,8 +2,9 @@ var protocol = ('https:' === document.location.protocol ? 'https://' : 'http://'
 
 function requirePerformanceData(req, success, fail) {
 	var cache = PerformanceDataCache.get(req);
-	if (cache != null) {
-		return cache;
+	if (cache) {
+		success(cache);
+		return;
 	}
 	var timeout = setTimeout(function() { // For using jsonp, use timeout for network error.
 		if (timeout != null) {
@@ -50,7 +51,7 @@ var PerformanceDataCache = {
 		}
 	},
 	get: function(jsonKey) {
-		var strKey = jsonToSortedArray(jsonKey);
+		var strKey = JSON.stringify(jsonToSortedArray(jsonKey));
 		return this.cache[strKey];
 	}
 };

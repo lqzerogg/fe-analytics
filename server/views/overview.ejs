@@ -5,7 +5,7 @@
 			<% include nav %>
 		</div>
 		<!--/span-->
-		<div class="span10">
+		<section class="span10 container">
 			<h3>Overview</h3>
 			<div class="clearfix">
 				<div class="btn-toolbar clearfix">
@@ -163,7 +163,12 @@
 				</div>
 			</div>
 			<!--/row-->
-		</div>
+			<div id="loadMask" class="hide">
+				<div class="meter animate">
+					<span style="width: 0"><span></span></span>
+				</div>
+			</div>
+		</section>
 		<!--/span-->
 	</div>
 	<!--/row-->
@@ -224,6 +229,12 @@ function acquireData(options, success) {
 	);
 	requirePerformanceData(options, success, function() {
 		alert('Failed acquiring data.');
+	}, function() { // init
+		$('#loadMask').show().find('.meter > span').css('width', 0);
+	}, function(p) { // progress
+		$('#loadMask > .meter > span').css('width', p + '%');
+	}, function() { // destroy
+		$('#loadMask').fadeOut('slow');
 	});
 }
 

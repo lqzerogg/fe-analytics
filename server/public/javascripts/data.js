@@ -16,7 +16,7 @@ function requirePerformanceData(req, success, fail, init, progress, destroy) {
 			timeout = null;
 			fail();
 		}
-	}, 60000);
+	}, 10 * 60000);
 	$.getJSON(
 		protocol + 'test.webservice.com/index.php?method=vela.item.performance.get&callback=?&format=STRING',
 		req,

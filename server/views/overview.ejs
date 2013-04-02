@@ -556,6 +556,7 @@ $('#table-view .allPlotViewBtn').live('click', function() {
 });
 
 $('#table-view .plotViewBtn').live('click', function() {
+/*
 	var dim = new Object(),
 		dimElems = $(this).parent().siblings().children('em');
 	for (var i = 0; i < dimElems.length; i++) {
@@ -563,6 +564,10 @@ $('#table-view .plotViewBtn').live('click', function() {
 		dim[$('#table-view > thead > tr > th:eq('+idx+')').text().toLowerCase().trim()] = $(dimElems[i]).attr('data-value');
 	}
 	drawPlot($.extend({'country':'all', 'browser': 'all'}, dim), switchToPlotView);
+*/
+	var dimElems = $(this).parent().siblings().children('em');
+	$.cookie('browser', $(dimElems[0]).attr('data-value'));
+	drawPlot({'country':'all'}, switchToPlotView);
 });
 
 function switchToPlotView() {

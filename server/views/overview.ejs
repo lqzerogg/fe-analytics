@@ -1,11 +1,6 @@
 <% include header %>
 <div class="container-fluid">
-	<div class="row-fluid">
-		<div class="span2">
-			<% include nav %>
-		</div>
-		<!--/span-->
-		<section class="span10 container">
+		<section class="row-fluid container">
 			<h3>Overview</h3>
 			<div class="clearfix">
 				<div class="btn-toolbar clearfix">
@@ -170,7 +165,6 @@
 			</div>
 		</section>
 		<!--/span-->
-	</div>
 	<!--/row-->
 	<hr>
 	<footer>
@@ -565,8 +559,14 @@ $('#table-view .plotViewBtn').live('click', function() {
 	}
 	drawPlot($.extend({'country':'all', 'browser': 'all'}, dim), switchToPlotView);
 */
+console.log('cookie1: '+$.cookie('browser'));
 	var dimElems = $(this).parent().siblings().children('em');
-	$.cookie('browser', $(dimElems[0]).attr('data-value'));
+	if($(dimElems[0]).attr('data-value') === undefined) {
+		$.cookie('browser', 'all');
+	}
+	else {
+		$.cookie('browser', $(dimElems[0]).attr('data-value'));
+	}
 	drawPlot({'country':'all'}, switchToPlotView);
 });
 

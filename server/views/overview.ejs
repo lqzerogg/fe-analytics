@@ -1,6 +1,11 @@
 <% include header %>
 <div class="container-fluid">
-		<section class="row-fluid container">
+	<div class="row-fluid">
+		<div class="span2">
+			<% include nav %>
+		</div>
+		<!--/span-->
+		<section class="span10 container">
 			<h3>Overview</h3>
 			<div class="clearfix">
 				<div class="btn-toolbar clearfix">
@@ -165,6 +170,7 @@
 			</div>
 		</section>
 		<!--/span-->
+	</div>
 	<!--/row-->
 	<hr>
 	<footer>
@@ -550,7 +556,6 @@ $('#table-view .allPlotViewBtn').live('click', function() {
 });
 
 $('#table-view .plotViewBtn').live('click', function() {
-/*
 	var dim = new Object(),
 		dimElems = $(this).parent().siblings().children('em');
 	for (var i = 0; i < dimElems.length; i++) {
@@ -558,16 +563,6 @@ $('#table-view .plotViewBtn').live('click', function() {
 		dim[$('#table-view > thead > tr > th:eq('+idx+')').text().toLowerCase().trim()] = $(dimElems[i]).attr('data-value');
 	}
 	drawPlot($.extend({'country':'all', 'browser': 'all'}, dim), switchToPlotView);
-*/
-console.log('cookie1: '+$.cookie('browser'));
-	var dimElems = $(this).parent().siblings().children('em');
-	if($(dimElems[0]).attr('data-value') === undefined) {
-		$.cookie('browser', 'all');
-	}
-	else {
-		$.cookie('browser', $(dimElems[0]).attr('data-value'));
-	}
-	drawPlot({'country':'all'}, switchToPlotView);
 });
 
 function switchToPlotView() {

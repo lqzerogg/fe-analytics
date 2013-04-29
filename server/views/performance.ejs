@@ -1,4 +1,5 @@
 <% include header %>
+<link rel="stylesheet" href="stylesheets/performance.css">
 <div class="container-fluid">
 	<div class="row-fluid">
 		<div class="span2">
@@ -189,7 +190,7 @@
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
 <script src="bootstrap/js/bootstrap.js"></script>
 <script src="Highcharts-2.3.3/highcharts.js"></script>
-<script src="javascripts/data.js"></script>
+<script src="javascripts/performance.js"></script>
 
 <script>
 // Set query.cookie global options
@@ -229,12 +230,6 @@ function acquireData(options, success) {
 	);
 	requirePerformanceData(options, success, function() {
 		alert('Failed acquiring data.');
-	}, function() { // init
-		$('#loadMask').show().find('.meter > span').css('width', 0);
-	}, function(p) { // progress
-		$('#loadMask > .meter > span').css('width', p + '%');
-	}, function() { // destroy
-		$('#loadMask').fadeOut('slow');
 	});
 }
 
@@ -464,12 +459,16 @@ $('#viewMask').css({
 	'height': $('#plot-view').height()
 });
 
-$('#data-types > button, #date-range > button').click(function() {
+function() redrawAll() {
 	setTimeout(function() {
 		drawPlot();
 		redrawTable();
 	}, 200);
-});
+}
+
+$('#data-types > button, #date-range > button').click(redrawAll);
+$('#page-template').live('change', redrawAll);
+
 $('#page-type').change(function() {
 	var pageTemplates = {
 		'products_category': {
@@ -512,17 +511,9 @@ $('#page-type').change(function() {
 		$('#page-template').hide();
 	}
 
-	setTimeout(function() {
-		drawPlot();
-		redrawTable();
-	}, 200);
+	redrawAll();
 });
-$('#page-template').live('change', function() {
-	setTimeout(function() {
-		drawPlot();
-		redrawTable();
-	}, 200);
-});
+
 $('#date-unit > button').click(function() {
 	setTimeout(function() {
 		drawPlot({}, switchToPlotView);

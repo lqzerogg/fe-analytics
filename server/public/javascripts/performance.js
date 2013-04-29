@@ -1,7 +1,19 @@
+var loadMask = {
+	init: function() {
+		$('#loadMask').show().find('.meter > span').css('width', 0);
+	},
+	progress: function(p) {
+		$('#loadMask > .meter > span').css('width', p + '%');
+	},
+	complete: function() {
+		$('#loadMask').fadeOut('slow');
+	}
+}
+
 var protocol = ('https:' === document.location.protocol ? 'https://' : 'http://'),
 	queue = 0, completed = 0;
 
-function requirePerformanceData(req, success, fail, init, progress, destroy) {
+function requirePerformanceData(req, success, fail) {
 	var cache = PerformanceDataCache.get(req);
 	if (cache) {
 		success(cache);
@@ -9,31 +21,34 @@ function requirePerformanceData(req, success, fail, init, progress, destroy) {
 	}
 	if (queue++ === 0) {
 		completed = 0;
-		init();
+		loadMask.init();
 	}
 	var timeout = setTimeout(function() { // For using jsonp, use timeout for network error.
 		if (timeout != null) {
 			timeout = null;
 			fail();
+			queue = 0;
+			loadMask.complete();
 		}
-	}, 10 * 60000);
-	$.getJSON(
-		protocol + 'test.webservice.com/index.php?method=vela.item.performance.get&callback=?&format=STRING',
-		req,
-		function(resp) {
+	}, 60 * 1000);
+	$.ajax({
+		url: protocol + 'test.webservice.com/index.php?method=vela.item.performance.get&callback=?&format=STRING',
+		data: req,
+		dataType: 'jsonp',
+		success: function(resp) {
 			if (timeout != null) {
 				timeout = null;
 				clearTimeout(timeout);
 				PerformanceDataCache.put(req, resp);
-				progress(++completed / queue * 100);
+				loadMask.progress(++completed / queue * 100);
 				if (completed === queue) {
 					queue = 0;
-					destroy();
+					loadMask.complete();
 				}
 				success(resp);
 			}
 		}
-	);
+	});
 };
 
 // Sort object by keys and export to an array, not supported before ie9

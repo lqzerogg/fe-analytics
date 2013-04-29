@@ -3,10 +3,10 @@
  */
 
 exports.index = function(req, res, next){
-	res.redirect('overview');
+	res.redirect('performance');
 	//res.render('index', { title: 'Express' });
 };
 
-exports.overview = function(req, res, next){
-	res.render('overview', {});
+exports.performance = function(req, res, next){
+	res.render('performance', {});
 };

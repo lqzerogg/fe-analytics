@@ -30,7 +30,7 @@ app.configure('development', function(){
 });
 
 app.get('/', routes.index);
-app.get('/overview', routes.overview);
+app.get('/performance', routes.performance);
 app.get('/edit/:file(*)', file.edit);
 app.post('/save/:file(*)', file.save);
 app.post('/lint', file.lint);

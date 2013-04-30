@@ -8,5 +8,5 @@ exports.index = function(req, res, next){
 };
 
 exports.performance = function(req, res, next){
-	res.render('performance', {});
+	res.render('performance', {config: req.query.t === 'mobile' ? 'mobile_performance_config.js' : 'pc_performance_config.js'});
 };

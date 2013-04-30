@@ -1,6 +1,7 @@
 			<div class="well sidebar-nav">
 				<ul class="nav nav-list">
-					<li class="nav-header active"><a href="#">Overview</a></li>
+					<li class="nav-header <%= type !== 'mobile' ? 'active' : ''%>"><a href="performance">PC Performance</a></li>
+					<li class="nav-header <%= type === 'mobile' ? 'active' : ''%>"><a href="performance?t=mobile">Mobile Performance</a></li>
 					<!-- li><a href="#">Browser &amp; OS</a></li -->
 					<!-- li><a href="location.html">Location</a></li -->
 				</ul>

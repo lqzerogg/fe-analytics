@@ -174,7 +174,7 @@
 <script src="bootstrap/js/bootstrap.js"></script>
 <script src="Highcharts-2.3.3/highcharts.js"></script>
 <script src="javascripts/performance.js"></script>
-<script src="javascripts/<%= config %>"></script>
+<script src="javascripts/<%= type === 'mobile' ? 'mobile_performance_config.js' : 'pc_performance_config.js' %>"></script>
 
 <script>
 $('#page-type').html(config.pageTypes);

@@ -214,6 +214,8 @@ function acquireData(options, success) {
 			country: $.cookie('country')
 		}, options
 	);
+	<%- type === 'mobile' ? 'options.browser === "all" && (options.browser =  "m_all")' : '' %>
+	<%- type === 'mobile' ? 'options.site = "mobile_" + options.site' : '' %>
 	requirePerformanceData(options, success, function() {
 		alert('Failed acquiring data.');
 	});

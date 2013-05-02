@@ -214,8 +214,9 @@ function acquireData(options, success) {
 			country: $.cookie('country')
 		}, options
 	);
-	<%- type === 'mobile' ? 'options.browser === "all" && (options.browser =  "m_all")' : '' %>
-	<%- type === 'mobile' ? 'options.site = "mobile_" + options.site' : '' %>
+	<%- type === 'mobile' ? 'options.browser = "m_" + options.browser' : '' %>
+	<%- type === 'mobile' ? 'options.page = "m_" + options.page' : '' %>
+	<%- type === 'mobile' ? 'options.site = "m_" + options.site' : '' %>
 	requirePerformanceData(options, success, function() {
 		alert('Failed acquiring data.');
 	});
@@ -391,9 +392,9 @@ drawPlot({}, switchToPlotView);
 					if (dimensions[i].toLowerCase() === 'country') {
 						rowHtml += '<td><em data-value="' + data[m][dimensions[i].toLowerCase()] + '">' + country_names[data[m][dimensions[i].toLowerCase()]] + '</em></td>';
 					} else if (dimensions[i].toLowerCase() === 'browser') {
-						rowHtml += '<td><em data-value="' + data[m][dimensions[i].toLowerCase()] + '">' + data[m][dimensions[i].toLowerCase()].replace('-all', '') + '</em></td>';
+						rowHtml += '<td><em data-value="' + data[m][dimensions[i].toLowerCase()].replace('m_', '') + '">' + data[m][dimensions[i].toLowerCase()].replace('-all', '').replace('m_', '') + '</em></td>';
 					} else if (dimensions[i].toLowerCase() === 'browser & version') {
-						rowHtml += '<td><em data-value="' + data[m]['browser'] + '">' + data[m]['browser'] + '</em></td>';
+						rowHtml += '<td><em data-value="' + data[m]['browser'].replace('m_', '') + '">' + data[m]['browser'].replace('m_', '') + '</em></td>';
 					}
 				}
 			}

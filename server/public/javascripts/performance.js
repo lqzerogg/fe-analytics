@@ -30,7 +30,7 @@ function requirePerformanceData(req, success, fail) {
 			queue = 0;
 			loadMask.complete();
 		}
-	}, 60 * 1000);
+	}, 2 * 60 * 1000);
 	$.ajax({
 		url: protocol + 'test.webservice.com/index.php?method=vela.item.performance.get&callback=?&format=STRING',
 		data: req,

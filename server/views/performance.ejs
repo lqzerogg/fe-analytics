@@ -7,7 +7,7 @@
 		</div>
 		<!--/span-->
 		<section class="span10 container">
-			<h3>Overview</h3>
+			<h3><%= type !== 'mobile' ? 'PC' : 'Mobile'%> Performance</h3>
 			<div class="clearfix">
 				<div class="btn-toolbar clearfix">
 					<select id="page-type" class="pull-left"></select>
@@ -36,12 +36,21 @@
 					<button class="btn active">Network Latency</button>
 				</div>
 
+				<div class="btn-group pull-left hide" data-toggle="buttons-checkbox">
+					<button id="data-ab" class="btn btn-primary">A/B Testing</button>
+				</div>
+
 				<button id="switchView" class="btn btn-link pull-right" title="Switch View"><i class="icon-retweet"></i> Switch View</button>
 			</div>
 
 			<div id="viewMask">
 				<div id="bothViewsWrapper">
-					<div id="plot-view" class="viewWrapper"></div>
+					<div id="plot-view" class="viewWrapper">
+						<div id="all-view"></div>
+						<div id="load-view"></div>
+						<div id="domReady-view"></div>
+						<div id="networkLatency-view"></div>
+					</div>
 
 					<div class="viewWrapper" style="display: none;">
 						
@@ -177,6 +186,10 @@
 <script src="javascripts/<%= type === 'mobile' ? 'mobile_performance_config.js' : 'pc_performance_config.js' %>"></script>
 
 <script>
+var abtags = ['ALL'],
+	METRICS = {'load': 'Window Load', 'domReady': 'Dom Ready', 'networkLatency': 'Network Latency'},
+	charts = {};
+
 $('#page-type').html(config.pageTypes);
 
 // Set query.cookie global options
@@ -217,9 +230,26 @@ function acquireData(options, success) {
 	<%- type === 'mobile' ? 'options.browser = "m_" + options.browser' : '' %>
 	<%- type === 'mobile' ? 'options.page = "m_" + options.page' : '' %>
 	<%- type === 'mobile' ? 'options.site = "m_" + options.site' : '' %>
-	requirePerformanceData(options, success, function() {
-		alert('Failed acquiring data.');
-	});
+	var allData = {};
+	$.each(abtags, function(i, abtag) {
+		requirePerformanceData($.extend({'abtag': abtag}, options), function(data) {
+			if (data == null || typeof(data.length) == 'undefined' || data.length == 0) {
+				alert('Invalid data acquired.');
+				return false;
+			}
+			allData[abtag] = data;
+			var j = 0;
+			for (; j<abtags.length; j++) {
+				if (!allData[abtags[j]])
+					break;
+			}
+			if (j === abtags.length) {
+				success(allData);
+			}
+		}, function() {
+			alert('Failed acquiring data.');
+		});
+	})
 }
 
 var ONE_DAY = 24 * 3600 * 1000,
@@ -228,17 +258,7 @@ var ONE_DAY = 24 * 3600 * 1000,
 	country_names = {'fr':'France', 'us':'United States', 'it':'Italy', 'es':'Spain', 'gb':'United Kingdom', 'br':'Brazil', 'dk':'Denmark', 'de':'Germany', 'nl':'Netherlands', 'no':'Norway', 'au':'Australia', 'be':'Belgium', 'se':'Sweden', 'ca':'Canada', 'ru':'Russian Federation', 'ch':'Switzerland', 'ie':'Ireland', 'at':'Austria', 'pt':'Portugal', 'gr':'Greece'};
 
 function drawPlot(options, done) {
-	var series = [{
-			name: 'Window Load',
-			data: []
-		}, {
-			name: 'Dom Ready',
-			data: []
-		}, {
-			name: 'Network Latency',
-			data: []
-		}];
-	acquireData(options, function(data) {
+	acquireData(options, function(allData) {
 		if (options && options['browser & version']) {
 			$.cookie('browser', options['browser & version']);
 		} else if (options && options.browser) {
@@ -247,67 +267,130 @@ function drawPlot(options, done) {
 		if (options && options.country) {
 			$.cookie('country', options.country);
 		}
-		if (data == null || typeof(data.length) == 'undefined' || data.length == 0) {
-			alert('Invalid data acquired.');
-			return false;
-		}
-		var i = 0;
-		for (; i < data.length; i++) {
-			var date = (data[i].date+'').split('');
-			date.splice(6, 0, '/');
-			date.splice(4, 0, '/');
-			series[0].data.push({x: new Date(date.join('')).getTime() + EIGHT_HOURS, y: data[i].load});
-			series[1].data.push({x: new Date(date.join('')).getTime() + EIGHT_HOURS, y: data[i].domReady});
-			series[2].data.push({x: new Date(date.join('')).getTime() + EIGHT_HOURS, y: data[i].networkLatency});
-		}
 
-		if (typeof(chart) !== 'undefined') {
-			chart.destroy();
-		}
-		chart = new Highcharts.Chart({
-			chart: {
-				renderTo: 'plot-view',
-				type: 'area'
-			},
-			title: {
-				text: 'FrontEnd Performance'
-			},
-			subtitle: {
-				text: (($.cookie('browser') !== 'all') ? ('browser:' + ($.cookie('browser').indexOf('all') === -1 ? $.cookie('browser') : $.cookie('browser').replace('-all', '') )+' ') : '') +
-						(($.cookie('country') !== 'all') ? ('country:' + country_names[$.cookie('country')]) : ''),
-            style: {
-                color: '#FF0000'
-            }
-			},
-			xAxis: {
-				type: 'datetime',
-				minTickInterval: ONE_DAY
-			},
-			yAxis: {
+		if (abtags.length > 1) {
+			$.each(METRICS, function(metric) {
+				var series = [],
+					data = allData[abtags[0]], i = 0;
+				for (; i < data.length; i++) {
+					var date = (data[i].date+'').split('');
+					date.splice(6, 0, '/');
+					date.splice(4, 0, '/');
+					var j = 0;
+					for (;j < abtags.length; j++) {
+						if (i === 0) {
+							series.push({name: abtags[j], data: []});
+						}
+						series[j].data.push({x: new Date(date.join('')).getTime() + EIGHT_HOURS, y: allData[abtags[j]][i][metric]});
+					}
+				}
+
+				if (charts[metric]) {
+					charts[metric].destroy();
+				}
+				charts[metric] = new Highcharts.Chart({
+					chart: {
+						renderTo: metric + '-view',
+						type: 'line'
+					},
+					title: {
+						text: METRICS[metric],
+					},
+					subtitle: {
+						text: (($.cookie('browser') !== 'all') ? ('browser:' + ($.cookie('browser').indexOf('all') === -1 ? $.cookie('browser') : $.cookie('browser').replace('-all', '') )+' ') : '') +
+								(($.cookie('country') !== 'all') ? ('country:' + country_names[$.cookie('country')]) : ''),
+		            style: {
+		                color: '#FF0000'
+		            }
+					},
+					xAxis: {
+						type: 'datetime',
+						minTickInterval: ONE_DAY
+					},
+					yAxis: {
+						title: {
+							text: 'Performance Timing'
+						},
+						labels: {
+							formatter: function () {
+								return this.value + 'ms';
+							}
+						}
+					},
+					plotOptions: {
+						line: {
+							//stacking: 'normal',
+							marker: {
+								//enabled: false,
+								//symbol: 'circle',
+								//radius: 2
+							}
+						}
+					},
+					series: series
+				});
+			});
+		} else {
+			var series = [],
+				data = allData[abtags[0]], i = 0;
+			for (; i < data.length; i++) {
+				var date = (data[i].date+'').split('');
+				date.splice(6, 0, '/');
+				date.splice(4, 0, '/');
+				var j = 0;
+				$.each(METRICS, function(metric) {
+					if (i === 0) {
+						series.push({name: METRICS[metric], data: []});
+					}
+					series[j++].data.push({x: new Date(date.join('')).getTime() + EIGHT_HOURS, y: data[i][metric]});
+				});
+			}
+
+			if (charts['all']) {
+				charts['all'].destroy();
+			}
+			charts['all'] = new Highcharts.Chart({
+				chart: {
+					renderTo: 'all-view',
+					type: 'area'
+				},
 				title: {
-					text: 'Performance Timing'
+					text: 'FrontEnd Performance',
 				},
-				labels: {
-					formatter: function () {
-						return this.value + 'ms';
-					}
-				}
-			},
-			plotOptions: {
-				column: {
-					//stacking: 'normal'
+				subtitle: {
+					text: (($.cookie('browser') !== 'all') ? ('browser:' + ($.cookie('browser').indexOf('all') === -1 ? $.cookie('browser') : $.cookie('browser').replace('-all', '') )+' ') : '') +
+							(($.cookie('country') !== 'all') ? ('country:' + country_names[$.cookie('country')]) : ''),
+	            style: {
+	                color: '#FF0000'
+	            }
 				},
-				area: {
-					//stacking: 'normal',
-					marker: {
-						enabled: false,
-						symbol: 'circle',
-						radius: 2
+				xAxis: {
+					type: 'datetime',
+					minTickInterval: ONE_DAY
+				},
+				yAxis: {
+					title: {
+						text: 'Performance Timing'
+					},
+					labels: {
+						formatter: function () {
+							return this.value + 'ms';
+						}
 					}
-				}
-			},
-			series: series
-		});
+				},
+				plotOptions: {
+					area: {
+						//stacking: 'normal',
+						marker: {
+							enabled: false,
+							//symbol: 'circle',
+							//radius: 2
+						}
+					}
+				},
+				series: series
+			});
+		}	
 		if (done) {
 			done.call();
 		}
@@ -317,6 +400,16 @@ function drawPlot(options, done) {
 drawPlot({}, switchToPlotView);
 
 (function drawTable() {
+	function combineAB(data) {
+		var result = $.extend({}, data[abtags[0]][0]),
+			i = 1;
+		for (; i < abtags.length; i++) {
+			$.each(METRICS, function(metric) {
+				result[metric] += ' / ' + data[abtags[i]][0][metric];
+			});
+		}
+		return result;
+	}
 	var dataGenerator = {
 		getData: function(dims) {
 			var data = new Array(), result = new Array(),
@@ -340,13 +433,7 @@ drawPlot({}, switchToPlotView);
 				}
 				for (i = 0; i < data.length; i++) {
 					acquireData($.extend({dateunit: 'all'}, data[i]), function(resp) {
-						if (resp[0]['browser'] !== 'all') {
-							if (resp[0]['browser'].indexOf('all') > -1) {
-								//resp[0]['version'] = resp[0]['browser'].substring(resp[0]['browser'].indexOf('-') + 1);
-								//resp[0]['browser'] = resp[0]['browser'].substring(0, resp[0]['browser'].indexOf('-'));
-							}
-						}
-						result.push(resp[0]);
+						result.push(combineAB(resp));
 						// All requires have returned.
 						if (result.length === data.length) {
 							toDraw(dims, result);
@@ -355,7 +442,8 @@ drawPlot({}, switchToPlotView);
 				}
 			} else {
 				acquireData({dateunit: 'all'}, function(resp) {
-					toDraw(dims, resp);
+					result.push(combineAB(resp));
+					toDraw(dims, result);
 				});
 			}
 			return data;
@@ -400,13 +488,27 @@ drawPlot({}, switchToPlotView);
 			}
 
 			if (m == 0) {
-				theadHtml += '<th>Network Latency(ms)</th><th>Dom Ready(ms)</th><th>Window Load(ms)</th><th>Visits</th><th>Proportion</th>';
+				$.each(METRICS, function(metric) {
+					theadHtml += '<th>' + METRICS[metric] + ' (ms)';
+					if (abtags.length > 1) {
+						theadHtml += '<br/>';
+						var j = 0;
+						for (;j < abtags.length; j++) {
+							if (j !== 0) {
+								theadHtml += ' / ';
+							}
+							theadHtml += abtags[j];
+						}
+					}
+					theadHtml += '</th>';
+				});
+				theadHtml += '<th>Visits</th><th>Proportion</th>';
 			}
-			rowHtml += '<td>' + data[m]['networkLatency'] + '</td>' +
-							'<td>' + data[m]['domReady'] + '</td>' +
-							'<td>' + data[m]['load'] + '</td>' +
-							'<td>' + data[m]['count'] + '</td>' +
-							'<td><div style="width: ' + data[m]['Proportion'] + 'px;" class="per-bar"></div><span>' + data[m]['Proportion'] + '%</span></td>';
+			$.each(METRICS, function(metric) {
+				rowHtml += '<td>' + data[m][metric] + '</td>';
+			});
+			rowHtml += '<td>' + data[m]['count'] + '</td>' +
+						'<td><div style="width: ' + data[m]['Proportion'] + 'px;" class="per-bar"></div><span>' + data[m]['Proportion'] + '%</span></td>';
 
 			tbodyHtml += rowHtml + '</tr>';
 		}
@@ -449,6 +551,18 @@ function redrawAll() {
 		redrawTable();
 	}, 200);
 }
+
+$('#data-ab').click(function() {
+	abtags = $(this).hasClass('active') ? ['ALL'] : ['ALL', 'A', 'B'];
+	$.each(charts, function(key, chart) {
+		if (chart) {
+			chart.destroy();
+			charts[key] = null;
+		}
+	});
+	drawPlot({}, switchToPlotView);
+	redrawTable();
+});
 
 $('#data-types > button, #date-range > button').click(redrawAll);
 $('#page-template').live('change', redrawAll);

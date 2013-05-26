@@ -9,32 +9,66 @@
 <!-- Le styles -->
 <link rel="stylesheet" href="bootstrap/css/bootstrap.css">
 <link rel="stylesheet" href="bootstrap/css/bootstrap-responsive.css">
-<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
-<!--[if lt IE 9]>
-<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-<![endif]-->
 </head>
 <body>
 <div class="navbar navbar-inverse navbar-fixed-top">
 	<div class="navbar-inner">
-		<div class="container-fluid">
+		<div class="container">
 			<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-			<span class="icon-bar"></span>
-			<span class="icon-bar"></span>
-			<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
 			</a>
-			<a class="brand" href="#">Performance Monitor</a>
+			<a class="brand" href="#">FrontEnd Performance</a>
 			<div class="nav-collapse collapse">
-				<p class="navbar-text pull-right">
-					 Logged in as <a href="#" class="navbar-link">Username</a>
+				<p class="navbar-text pull-right hide">
+					Logged in as <a href="#" class="navbar-link">Username</a>
 				</p>
 				<ul class="nav">
-					<li class="active"><a href="#">Home</a></li>
-					<li><a href="#about">About</a></li>
-					<li><a href="#contact">Contact</a></li>
+					<li class="<%= type !== 'mobile' ? 'active' : ''%>"><a href="performance">PC</a></li>
+					<li class="<%= type === 'mobile' ? 'active' : ''%>"><a href="performance?t=mobile">Mobile</a></li>
 				</ul>
 			</div>
 			<!--/.nav-collapse -->
+		</div>
+	</div>
+	<div class="option-container">
+		<div class="container">
+			<div class="btn-toolbar clearfix">
+				<div id="date-range">
+					<label class="pull-left">From: 
+						<input id="date-start" type="text" class="input-small" value="<%= from %>" />
+					</label>
+					<label class="pull-left">To:
+						<input id="date-end" type="text" class="input-small" value="<%= to %>" />
+					</label>
+				</div>
+				<select id="date-unit" class="pull-left input-small">
+					<option value="day" <%= unit === 'day' ? 'selected' : '' %>>Day</option>
+					<option value="week" <%= unit === 'week' ? 'selected' : '' %>>Week</option>
+					<option value="month" <%= unit === 'month' ? 'selected' : '' %>>Month</option>
+				</select>
+			</div>
+			<div class="btn-toolbar clearfix">
+				<select id="browser" class="pull-left input-medium">
+					<option value="all">-- Browser --</option>
+				</select>
+				<select id="country" class="pull-left input-medium">
+					<option value="all">-- Country --</option>
+				</select>
+				<select id="page-type" class="pull-left input-medium"></select>
+				<select id="page-template" class="pull-left input-medium hide"></select>
+			</div>
+			<div class="btn-toolbar clearfix">
+				<label for="" class="pull-left">A/B Testing: </label>
+				<label class="checkbox pull-left"><input class="data-ab" type="checkbox" <%= (ab.length === 0 || ab.indexOf('ALL') > -1) ? 'checked' : '' %> value="ALL" /> All</label>
+				<label class="checkbox pull-left"><input class="data-ab" type="checkbox" <%= (ab.indexOf('A') > -1) ? 'checked' : '' %> value="A" /> A</label>
+				<label class="checkbox pull-left"><input class="data-ab" type="checkbox" <%= (ab.indexOf('B') > -1) ? 'checked' : '' %> value="B" /> B</label>
+			</div>
+			<button id="apply-btn" class="btn btn-primary btn-large">APPLY</button>
+			<div class="notif-wrapper container">
+				<span id="notif"></span>
+			</div>
 		</div>
 	</div>
 </div>

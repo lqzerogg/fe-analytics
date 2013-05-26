@@ -2,7 +2,41 @@ var config = {
 	dimensions: {
 		'country': ['fr', 'us', 'it', 'es', 'gb', 'br', 'dk', 'de', 'nl', 'no', 'au', 'be', 'se', 'ca', 'ru', 'ch', 'ie', 'at', 'pt', 'gr'],
 		'browser': ['chrome-all', 'firefox-all', 'ie-all'],
-		'browser & version': ['chrome-27', 'chrome-26', 'chrome-25', 'firefox-20', 'firefox-19', 'ie-10', 'ie-9']
+		'browser & version': ['chrome-27', 'chrome-26', 'chrome-25', 'firefox-21', 'firefox-20', 'ie-10', 'ie-9']
+	},
+	countries: {
+		'fr': 'France',
+		'us': 'United States',
+		'it': 'Italy',
+		'es': 'Spain',
+		'gb': 'United Kingdom',
+		'br': 'Brazil',
+		'dk': 'Denmark',
+		'de': 'Germany',
+		'nl': 'Netherlands',
+		'no': 'Norway',
+		'au': 'Australia',
+		'be': 'Belgium',
+		'se': 'Sweden',
+		'ca': 'Canada',
+		'ru': 'Russian Federation',
+		'ch': 'Switzerland',
+		'ie': 'Ireland',
+		'at': 'Austria',
+		'pt': 'Portugal',
+		'gr': 'Greece'
+	},
+	browsers: {
+		'chrome-all':  'Chrome',
+		'chrome-27':   'Chrome 27',
+		'chrome-26':   'Chrome 26',
+		'chrome-25':   'Chrome 25',
+		'firefox-all': 'Firefox',
+		'firefox-21':  'Firefox 21',
+		'firefox-20':  'Firefox 20',
+		'ie-all':      'Internet Explorer',
+		'ie-10':       'Internet Explorer 10',
+		'ie-9':        'Internet Explorer 9'
 	},
 	pageTypes: '<optgroup label="litb">\
 						<option value="litb_all">litb 全部页面</option>\

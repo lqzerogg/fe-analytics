@@ -4,6 +4,45 @@ var config = {
 		'browser': ['chrome-all', 'firefox-all', 'android-all'],
 		'browser & version': ['chrome-28', 'chrome-27', 'chrome-26', 'chrome-25', 'firefox-22', 'firefox-21', 'firefox-20', 'firefox-19', 'android-5.0', 'android-4.2', 'android-4.1', 'android-4.0']
 	},
+	countries: {
+		'fr': 'France',
+		'us': 'United States',
+		'it': 'Italy',
+		'es': 'Spain',
+		'gb': 'United Kingdom',
+		'br': 'Brazil',
+		'dk': 'Denmark',
+		'de': 'Germany',
+		'nl': 'Netherlands',
+		'no': 'Norway',
+		'au': 'Australia',
+		'be': 'Belgium',
+		'se': 'Sweden',
+		'ca': 'Canada',
+		'ru': 'Russian Federation',
+		'ch': 'Switzerland',
+		'ie': 'Ireland',
+		'at': 'Austria',
+		'pt': 'Portugal',
+		'gr': 'Greece'
+	},
+	browsers: {
+		'chrome-all':  'Chrome',
+		'chrome-28':   'Chrome 28',
+		'chrome-27':   'Chrome 27',
+		'chrome-26':   'Chrome 26',
+		'chrome-25':   'Chrome 25',
+		'firefox-all': 'Firefox',
+		'firefox-22':  'Firefox 22',
+		'firefox-21':  'Firefox 21',
+		'firefox-20':  'Firefox 20',
+		'firefox-19':  'Firefox 19',
+		'android-all': 'Android',
+		'android-5.0': 'Android 5.0',
+		'android-4.2': 'Android 4.2',
+		'android-4.1': 'Android 4.1',
+		'android-4.0': 'Android 4.0'
+	},
 	pageTypes: '<optgroup label="litb">\
 						<option value="litb_all">litb 全部页面</option>\
 						<option value="litb_index">litb 首页</option>\

@@ -1,60 +1,18 @@
 <% include header %>
 <link rel="stylesheet" href="stylesheets/performance.css">
-<div class="container-fluid">
-	<div class="row-fluid">
-		<div class="span2">
-			<% include nav %>
-		</div>
 		<!--/span-->
-		<section class="span10 container">
-			<h3><%= type !== 'mobile' ? 'PC' : 'Mobile'%> Performance</h3>
-			<div class="clearfix">
-				<div class="btn-toolbar clearfix">
-					<select id="page-type" class="pull-left"></select>
-					<select id="page-template" class="pull-left" style="display: none;"></select>
-
-					<div id="date-range" class="pull-right">
-						<label class="pull-left">From: 
-							<input id="date-start" type="text" class="input-small" value="01/01/2013" />
-						</label>
-						<label class="pull-left">To:
-							<input id="date-end" type="text" class="input-small" value="01/05/2013" />
-						</label>
-						<button class="btn">Apply</button>
-					</div>
-
-					<div id="date-unit" class="btn-group pull-right" data-toggle="buttons-radio">
-						<button class="btn active" value="day">Day</button>
-						<button class="btn" value="week">Week</button>
-						<button class="btn" value="month">Month</button>
-					</div>
-				</div>
-
-				<div id="data-types" class="btn-group pull-left hide" data-toggle="buttons-checkbox">
-					<button class="btn active">Window Load</button>
-					<button class="btn active">Dom Ready</button>
-					<button class="btn active">Network Latency</button>
-				</div>
-
-				<div class="btn-group pull-left" data-toggle="buttons-checkbox">
-					<button id="data-ab" class="btn btn-success">A/B Testing</button>
-				</div>
-
-				<button id="switchView" class="btn btn-link pull-right" title="Switch View"><i class="icon-retweet"></i> Switch View</button>
-			</div>
-
-			<div id="viewMask">
-				<div id="bothViewsWrapper">
-					<div id="plot-view" class="viewWrapper">
+		<div class="view-wrapper">
+			<div class="container">
+					<div id="plot-view">
 						<div id="all-view"></div>
 						<div id="load-view"></div>
 						<div id="domReady-view"></div>
 						<div id="networkLatency-view"></div>
 					</div>
 
-					<div class="viewWrapper" style="display: none;">
-						
-							<dl class="dl-horizontal data-dimension pull-left">
+					<div>
+						<div class="clearfix">
+							<dl class="dl-horizontal data-dimension pull-left hide">
 								<dt>Location:</dt>
 								<dd>
 									<ul class="options">
@@ -63,7 +21,7 @@
 								</dd>
 							</dl>
 
-							<dl class="dl-horizontal data-dimension pull-left">
+							<dl class="dl-horizontal data-dimension pull-left hide">
 								<dt>Browser:</dt>
 								<dd>
 									<ul class="options">
@@ -72,106 +30,28 @@
 									</ul>
 								</dd>
 							</dl>
-
+						</div>
 						<table id="table-view" class="table table-striped">
-							<thead>
-								<tr>
-									<th><button class="btn btn-link">All plot view</button></th>
-									<th>Country</th>
-									<th>Browser</th>
-									<th><a href="#">Network Latency</a></th>
-									<th><a href="#">Dom Ready</a></th>
-									<th><a href="#">Window Load</a></th>
-									<th><a href="#">Visits <i class="icon-arrow-down"></i></a></th>
-									<th></th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td><button class="btn btn-link">plot view</button></td>
-									<td><a href="#">United States</a></td>
-									<td><a href="#">Chrome</a></td>
-									<td>0.5</td>
-									<td>5.2</td>
-									<td>8.6</td>
-									<td>23432</td>
-									<td>
-										<div style="width: 35px;" class="per-bar"></div>
-										<span>35%</span>
-									</td>
-								</tr>
-								<tr>
-									<td><button class="btn btn-link">plot view</button></td>
-									<td><a href="#">France</a></td>
-									<td><a href="#">Firefox</a></td>
-									<td>0.5</td>
-									<td>5.2</td>
-									<td>8.6</td>
-									<td>23432</td>
-									<td>
-										<div style="width: 25px;" class="per-bar"></div>
-										<span>25%</span>
-									</td>
-								</tr>
-								<tr>
-									<td><button class="btn btn-link">plot view</button></td>
-									<td><a href="#">United Kingdom</a></td>
-									<td><a href="#">Chrome</a></td>
-									<td>0.5</td>
-									<td>5.2</td>
-									<td>8.6</td>
-									<td>23432</td>
-									<td>
-										<div style="width: 10px;" class="per-bar"></div>
-										<span>10%</span>
-									</td>
-								</tr>
-								<tr>
-									<td><button class="btn btn-link">plot view</button></td>
-									<td><a href="#">Germany</a></td>
-									<td><a href="#">Chrome</a></td>
-									<td>0.5</td>
-									<td>5.2</td>
-									<td>8.6</td>
-									<td>23432</td>
-									<td>
-										<div style="width: 5px;" class="per-bar"></div>
-										<span>5%</span>
-									</td>
-								</tr>
-							</tbody>
+							<thead></thead>
+							<tbody></tbody>
 						</table>
-						<!-- div class="pagination pagination-right">
-							<ul>
-								<li class="disabled"><a href="#">&laquo;</a></li>
-								<li class="active"><a href="#">1</a></li>
-								<li><a href="#">2</a></li>
-								<li><a href="#">3</a></li>
-								<li><a href="#">4</a></li>
-								<li><a href="#">5</a></li>
-								<li><a href="#">&raquo;</a></li>
-							</ul>
-						</div -->
 					</div>
-				</div>
 			</div>
 			<!--/row-->
-			<div id="loadMask" class="hide">
-				<div class="meter animate">
-					<span style="width: 0"><span></span></span>
-				</div>
-			</div>
-		</section>
+			<hr>
+			<footer>
+			<p>
+				&copy; Lightinthebox.com 2012
+			</p>
+			</footer>
+		</div>
 		<!--/span-->
+		<!--/row-->
+	<div id="loadMask" class="hide">
+		<div class="meter animate">
+			<span style="width: 0"><span></span></span>
+		</div>
 	</div>
-	<!--/row-->
-	<hr>
-	<footer>
-	<p>
-		&copy; Lightinthebox.com 2012
-	</p>
-	</footer>
-</div>
 <!--/.fluid-container-->
 <!-- Le javascript
     ================================================== -->
@@ -190,41 +70,68 @@ var abtags = ['ALL'],
 	METRICS = {'load': 'Window Load', 'domReady': 'Dom Ready', 'networkLatency': 'Network Latency'},
 	charts = {};
 
+$('#page-type').change(function() {
+	var templates = config.pageTemplates[$(this).val().substring($(this).val().indexOf('_') + 1)],
+		tempId = null,
+		options = '<option value="all">全部模板</option>';
+	if ( typeof templates !== 'undefined' && templates !== null) {
+		for (tempId in templates) {
+			options += '<option value="' + tempId + '">' + templates[tempId] + '</option>';
+		}
+		$('#page-template').html(options).show();
+	} else {
+		$('#page-template').hide();
+	}
+});
+
 $('#page-type').html(config.pageTypes);
+<%= page !== "" ? "$('#page-type').val('"+page+"').change()" : "" %>
+<%= template !== "" ? "$('#page-template').val('"+template+"')" : "" %>
+
+$.each(config.countries, function(key, value) {
+	$('#country').append('<option value="'+ key +'">'+ value +'</option>');
+});
+<%= country !== "" ? "$('#country').val('"+country+"')" : "" %>
+$.each(config.browsers, function(key, value) {
+	$('#browser').append('<option value="'+ key +'">'+ value +'</option>');
+});
+<%= browser !== "" ? "$('#browser').val('"+browser+"')" : "" %>
 
 // Set query.cookie global options
 $.cookie.json = true;
 $.cookie.defaults = {path: '/'};
 
-// Init cookies
-// if ($.cookie('browser') == null) {
-	$.cookie('browser', 'all');
-// }
-// if ($.cookie('country') == null) {
-	$.cookie('country', 'all');
-// }
-
 $('#date-start, #date-end').datepicker();
-var today = new Date();
-today.setDate(today.getDate() - 2);
-$('#date-end').val( ('0'+(today.getMonth()+1)).slice(-2) + '/' + ('0' + today.getDate()).slice(-2) + '/' + today.getFullYear());
-today.setDate(today.getDate() - 15);
-$('#date-start').val( ('0'+(today.getMonth()+1)).slice(-2) + '/' + ('0' + today.getDate()).slice(-2) + '/' + today.getFullYear());
+
+$.fn.setDate = function(date) {
+	this.val( ('0'+(date.getMonth()+1)).slice(-2) + '/' + ('0' + date.getDate()).slice(-2) + '/' + date.getFullYear());
+}
+
+if ($('#date-end').val() === '') {
+	var today = new Date();
+	today.setDate(today.getDate() - 2);
+	$('#date-end').setDate(today);
+	today.setDate(today.getDate() - 15);
+	$('#date-start').setDate(today);
+}
 
 function acquireData(options, success) {
 	var startDate = new Date($('#date-start').val()),
 		endDate = new Date($('#date-end').val()),
+		dateUnit = $('#date-unit').val(),
+		browser = $('#browser').val(),
+		country = $('#country').val(),
 		pageType = $('#page-type').val(),
 		pageTemplate = $('#page-template').is(':visible') ? ('-'+$('#page-template').val()) : '';
 	options = $.extend(
 		{
 			startdate: '' + startDate.getFullYear() + ('0'+(startDate.getMonth()+1)).slice(-2) + ('0' + startDate.getDate()).slice(-2),
 			enddate: '' + endDate.getFullYear() + ('0'+(endDate.getMonth()+1)).slice(-2) + ('0' + endDate.getDate()).slice(-2),
-			dateunit: $('#date-unit > .active').val(),
+			dateunit: dateUnit,
 			site: pageType.substring(0, pageType.indexOf('_')),
 			page: pageType.substring(pageType.indexOf('_') + 1) + pageTemplate,
-			browser: $.cookie('browser'),
-			country: $.cookie('country')
+			browser: browser,
+			country: country
 		}, options
 	);
 	<%- type === 'mobile' ? 'options.browser = "m_" + options.browser' : '' %>
@@ -232,9 +139,9 @@ function acquireData(options, success) {
 	<%- type === 'mobile' ? 'options.site = "m_" + options.site' : '' %>
 	var allData = {};
 	$.each(abtags, function(i, abtag) {
-		requirePerformanceData($.extend({'abtag': abtag}, options), function(data) {
+		dataUtil.getPerformanceData($.extend({'abtag': abtag}, options), function(data) {
 			if (data == null || typeof(data.length) == 'undefined' || data.length == 0) {
-				alert('Invalid data acquired.');
+				alert('数据异常，请联系管理员。<a href="mailto:wangshishuo@Lightinthebox.com">wangshishuo@lightinthebox.com</a>');
 				return false;
 			}
 			allData[abtag] = data;
@@ -247,26 +154,30 @@ function acquireData(options, success) {
 				success(allData);
 			}
 		}, function() {
-			alert('Failed acquiring data.');
+			notification.show('获取数据失败，请联系管理员。<a href="mailto:wangshishuo@Lightinthebox.com">wangshishuo@lightinthebox.com</a>');
 		});
 	})
 }
 
 var ONE_DAY = 24 * 3600 * 1000,
-	EIGHT_HOURS = 8 * 3600 * 1000,
-	// countries full name for displaying
-	country_names = {'fr':'France', 'us':'United States', 'it':'Italy', 'es':'Spain', 'gb':'United Kingdom', 'br':'Brazil', 'dk':'Denmark', 'de':'Germany', 'nl':'Netherlands', 'no':'Norway', 'au':'Australia', 'be':'Belgium', 'se':'Sweden', 'ca':'Canada', 'ru':'Russian Federation', 'ch':'Switzerland', 'ie':'Ireland', 'at':'Austria', 'pt':'Portugal', 'gr':'Greece'};
+	EIGHT_HOURS = 8 * 3600 * 1000;
 
 function drawPlot(options, done) {
+	if (options && options['browser & version']) {
+		$('#browser').val(options['browser & version']);
+	} else if (options && options.browser) {
+		$('#browser').val(options.browser);
+	}
+	if (options && options.country) {
+		$('#country').val(options.country);
+	}
 	acquireData(options, function(allData) {
-		if (options && options['browser & version']) {
-			$.cookie('browser', options['browser & version']);
-		} else if (options && options.browser) {
-			$.cookie('browser', options.browser);
-		}
-		if (options && options.country) {
-			$.cookie('country', options.country);
-		}
+		$.each(charts, function(key, chart) {
+			if (chart) {
+				chart.destroy();
+				charts[key] = null;
+			}
+		});
 
 		if (abtags.length > 1) {
 			$.each(METRICS, function(metric) {
@@ -297,8 +208,9 @@ function drawPlot(options, done) {
 						text: METRICS[metric],
 					},
 					subtitle: {
-						text: (($.cookie('browser') !== 'all') ? ('browser:' + ($.cookie('browser').indexOf('all') === -1 ? $.cookie('browser') : $.cookie('browser').replace('-all', '') )+' ') : '') +
-								(($.cookie('country') !== 'all') ? ('country:' + country_names[$.cookie('country')]) : ''),
+						text:
+							(($('#browser').val() !== 'all') ? ('Browser:' + config.browsers[$('#browser').val()]+' ') : '') +
+							(($('#country').val() !== 'all') ? ('Country:' + config.countries[$('#country').val()]) : ''),
 		            style: {
 		                color: '#FF0000'
 		            }
@@ -358,8 +270,9 @@ function drawPlot(options, done) {
 					text: 'FrontEnd Performance',
 				},
 				subtitle: {
-					text: (($.cookie('browser') !== 'all') ? ('browser:' + ($.cookie('browser').indexOf('all') === -1 ? $.cookie('browser') : $.cookie('browser').replace('-all', '') )+' ') : '') +
-							(($.cookie('country') !== 'all') ? ('country:' + country_names[$.cookie('country')]) : ''),
+					text:
+						(($('#browser').val() !== 'all') ? ('Browser:' + config.browsers[$('#browser').val()]+' ') : '') +
+						(($('#country').val() !== 'all') ? ('Country:' + config.countries[$('#country').val()]) : ''),
 	            style: {
 	                color: '#FF0000'
 	            }
@@ -397,16 +310,19 @@ function drawPlot(options, done) {
 	});
 };
 
-drawPlot({}, switchToPlotView);
-
 (function drawTable() {
 	function combineAB(data) {
 		var result = $.extend({}, data[abtags[0]][0]),
 			i = 1;
+		result['proportion'] = result['count'];
 		for (; i < abtags.length; i++) {
 			$.each(METRICS, function(metric) {
 				result[metric] += ' / ' + data[abtags[i]][0][metric];
 			});
+			result['count'] += ' / ' + data[abtags[i]][0]['count'];
+			if (abtags[0] !== 'ALL') {
+				result['proportion'] += data[abtags[i]][0]['count'];
+			}
 		}
 		return result;
 	}
@@ -453,38 +369,51 @@ drawPlot({}, switchToPlotView);
 	var toDraw = function(dimensions, data) {
 		var allVisits = 0, m = 0;
 		for (; m < data.length; m++) {
-			allVisits += parseInt(data[m]['count']);
+			allVisits += parseInt(data[m]['proportion']);
 		}
 		for (m = 0; m < data.length; m++) {
-			data[m]['Proportion'] = Math.round(data[m]['count'] / allVisits * 100);
+			data[m]['Proportion'] = Math.round(data[m]['proportion'] / allVisits * 100);
+		}
+		if (dimensions && dimensions.length > 0) {
+			for (m = 0; m < dimensions.length; m++) {
+				data.sort(function(a, b) {
+					if (dimensions[m] === 'Country')
+						return config.countries[a['country']] > config.countries[b['country']]
+					else
+						return config.browsers[a[dimensions[m].toLowerCase()]] > config.browsers[b[dimensions[m].toLowerCase()]]
+				})
+			}
 		}
 		draw(dimensions, data);
-
-		if ($('.viewWrapper:eq(1)').is(':visible')) {
-			$('#viewMask').css({
-				'height': $('.viewWrapper:eq(1)').show().height()
-			});
-		}
 	};
 
 	var draw = function(dimensions, data){
-		var theadHtml = '<tr><th><button class="btn btn-link allPlotViewBtn">All plot view</button></th>',
+		var theadHtml = '<tr><th><a href="javascript:void(0)" class="allPlotViewBtn icon-picture"></a></th>',
 			tbodyHtml = '';
 		for (var m = 0; m < data.length; m++) {
-			var rowHtml = '<tr><td><button class="btn btn-link plotViewBtn">plot view</button></td>';
-			if (dimensions) {
+			var rowHtml = '<tr><td><a href="javascript:void(0)" class="plotViewBtn icon-picture"></a></td>',
+				highlight = 0; // -1:never 0:maybe 1:can
+			if (dimensions && dimensions.length > 0) {
 				for (var i = 0; i < dimensions.length; i++) {
 					if (m == 0) {
 						theadHtml += '<th>' + dimensions[i] + ' <a href="#"><i class="icon-remove"></i></a></th>';
 					}
 					if (dimensions[i].toLowerCase() === 'country') {
-						rowHtml += '<td><em data-value="' + data[m][dimensions[i].toLowerCase()] + '">' + country_names[data[m][dimensions[i].toLowerCase()]] + '</em></td>';
+						rowHtml += '<td><em data-value="' + data[m][dimensions[i].toLowerCase()] + '">' + config.countries[data[m][dimensions[i].toLowerCase()]] + '</em></td>';
+						($('#country').val() !== 'all' && data[m][dimensions[i].toLowerCase()] !== $('#country').val()) && (highlight = -1);
+						($('#country').val() !== 'all' && data[m][dimensions[i].toLowerCase()] === $('#country').val()) && (highlight >= 0) && (highlight = 1);
 					} else if (dimensions[i].toLowerCase() === 'browser') {
-						rowHtml += '<td><em data-value="' + data[m][dimensions[i].toLowerCase()].replace('m_', '') + '">' + data[m][dimensions[i].toLowerCase()].replace('-all', '').replace('m_', '') + '</em></td>';
+						rowHtml += '<td><em data-value="' + data[m][dimensions[i].toLowerCase()].replace('m_', '') + '">' + config.browsers[data[m][dimensions[i].toLowerCase()].replace('m_', '')] + '</em></td>';
+
+						($('#browser').val() !== 'all' && data[m][dimensions[i].toLowerCase()].replace('m_', '') !== $('#browser').val()) && (highlight = -1);
+						($('#browser').val() !== 'all' && data[m][dimensions[i].toLowerCase()].replace('m_', '') === $('#browser').val()) && (highlight >= 0) && (highlight = 1);
 					} else if (dimensions[i].toLowerCase() === 'browser & version') {
-						rowHtml += '<td><em data-value="' + data[m]['browser'].replace('m_', '') + '">' + data[m]['browser'].replace('m_', '') + '</em></td>';
+						rowHtml += '<td><em data-value="' + data[m]['browser'].replace('m_', '') + '">' + config.browsers[data[m]['browser'].replace('m_', '')] + '</em></td>';
+						($('#browser').val() !== 'all' && data[m]['browser'].replace('m_', '') !== $('#browser').val()) && (highlight = -1);
+						($('#browser').val() !== 'all' && data[m]['browser'].replace('m_', '') === $('#browser').val()) && (highlight >= 0) && (highlight = 1);
 					}
 				}
+				(highlight > 0) && (rowHtml = rowHtml.replace('<tr>', '<tr class="hl">'));
 			}
 
 			if (m == 0) {
@@ -502,7 +431,18 @@ drawPlot({}, switchToPlotView);
 					}
 					theadHtml += '</th>';
 				});
-				theadHtml += '<th>Visits</th><th>Proportion</th>';
+				theadHtml += '<th>Visits';
+				if (abtags.length > 1) {
+					theadHtml += '<br/>';
+					var j = 0;
+					for (;j < abtags.length; j++) {
+						if (j !== 0) {
+							theadHtml += ' / ';
+						}
+						theadHtml += abtags[j];
+					}
+				}
+				theadHtml += '</th><th>Proportion</th>';
 			}
 			$.each(METRICS, function(metric) {
 				rowHtml += '<td>' + data[m][metric] + '</td>';
@@ -514,6 +454,7 @@ drawPlot({}, switchToPlotView);
 		}
 		$('#table-view > thead').html(theadHtml + '</tr>');
 		$('#table-view > tbody').html(tbodyHtml);
+		$('.data-dimension').show();
 	};
 
 	redrawTable = function() {
@@ -528,66 +469,62 @@ drawPlot({}, switchToPlotView);
 
 		dataGenerator.getData(dimensions);
 	};
-
-	redrawTable();
 }());
 
-// Init view masking
-$('.viewWrapper').css({
-	'float': 'left',
-	'width': $('#plot-view').width()
-});
-$('#bothViewsWrapper').css({
-	'position': 'absolute',
-	'width': $('#plot-view').width() * 2
-});
-$('#viewMask').css({
-	'height': $('#plot-view').height()
-});
-
-function redrawAll() {
-	setTimeout(function() {
-		drawPlot();
-		redrawTable();
-	}, 200);
+function redraw() {
+	$.each($('.data-dimension'), function() {
+		$.each($('li', this), function() {
+			if ($('a', this).length === 0) {
+				if ($(this).text() === 'Browser') {
+					if (/\d/.test($('#browser').val())) { // browser & version selected
+						$(this).wrapInner('<a href="#" />');
+					}
+				} else if ($(this).text() === 'Browser & Version') {
+					if (/-all/.test($('#browser').val())) { // browser selected
+						$(this).wrapInner('<a href="#" />');
+					}
+				}
+			} else {
+				if ($(this).text() === 'Browser' && /-all/.test($('#browser').val())) {
+					$(this).text($('a', this).text());
+				} else if ($(this).text() === 'Browser & Version' && /\d/.test($('#browser').val())) {
+					$(this).text($('a', this).text());
+				} else if ($(this).text() === 'Country' && $('#country').val() !== 'all') {
+					$(this).text($('a', this).text());
+				}
+			}
+		});
+	});
+	drawPlot();
+	redrawTable();
 }
 
-$('#data-ab').click(function() {
-	abtags = $(this).hasClass('active') ? ['ALL'] : ['ALL', 'A', 'B'];
-	$.each(charts, function(key, chart) {
-		if (chart) {
-			chart.destroy();
-			charts[key] = null;
-		}
-	});
-	redrawTable();
-	drawPlot({}, switchToPlotView);
+// init
+redraw();
+
+$('#apply-btn').click(function() {
+	var canceled = dataUtil.cancel()
+	canceled && notification.show('You have canceled previous operation.')
+
+	redraw()
+
+	canceled ? replaceState() : pushState()
 });
 
-$('#data-types > button, #date-range > button').click(redrawAll);
-$('#page-template').live('change', redrawAll);
-
-$('#page-type').change(function() {
-	var templates = config.pageTemplates[$(this).val().substring($(this).val().indexOf('_') + 1)],
-		tempId = null,
-		options = '<option value="all">全部模板</option>';
-	if ( typeof templates !== 'undefined' && templates !== null) {
-		for (tempId in templates) {
-			options += '<option value="' + tempId + '">' + templates[tempId] + '</option>';
-		}
-		$('#page-template').html(options).show();
-	} else {
-		$('#page-template').hide();
+$('.data-ab').click(function() {
+	if ($('.data-ab:checked').length === 0) {
+		notification.show('Check one option at the least.')
+		return false;
 	}
-
-	redrawAll();
+	resetAB();
 });
 
-$('#date-unit > button').click(function() {
-	setTimeout(function() {
-		drawPlot({}, switchToPlotView);
-	}, 200);
-});
+function resetAB() {
+	abtags = [];
+	$('.data-ab:checked').each(function() {
+		abtags.push($(this).val());
+	});
+}
 
 $('.data-dimension li a').live('click', function() {
 	if ($(this).text() === 'Browser') {
@@ -596,23 +533,31 @@ $('.data-dimension li a').live('click', function() {
 		$(this).parent().prev().html('<a href="#">Browser</a>');
 	}
 	$(this).parent().text($(this).text());
-	setTimeout(redrawTable, 200);
+	redrawTable();
 	return false;
 });
 
 $('#table-view th > a').live('click', function() {
-	var dimStr = $.trim($(this).parent().text());
+	var dim = new Object(),
+		dimStr = $.trim($(this).parent().text());
 	$('.data-dimension li').each(function() {
 		if ($.trim($(this).text()) === dimStr) {
 			$(this).wrapInner('<a href="#" />');
+			dim[dimStr.toLowerCase()] = 'all';
 		}
 	});
-	setTimeout(redrawTable, 200);
+	drawPlot(dim);
+	redrawTable();
+
+	pushState()
+
 	return false;
 });
 
 $('#table-view .allPlotViewBtn').live('click', function() {
-	drawPlot({country: 'all', browser: 'all'}, switchToPlotView);
+	drawPlot({country: 'all', browser: 'all'});
+
+	pushState()
 });
 
 $('#table-view .plotViewBtn').live('click', function() {
@@ -620,37 +565,50 @@ $('#table-view .plotViewBtn').live('click', function() {
 		dimElems = $(this).parent().siblings().children('em');
 	for (var i = 0; i < dimElems.length; i++) {
 		var idx = $(dimElems[i]).parents('tr').children().index($(dimElems[i]).parent());
-		dim[$('#table-view > thead > tr > th:eq('+idx+')').text().toLowerCase().trim()] = $(dimElems[i]).attr('data-value');
+		var metric = $('#table-view > thead > tr > th:eq('+idx+')').text().toLowerCase().trim();
+		dim[metric === 'browser & version' ? 'browser' : metric] = $(dimElems[i]).attr('data-value');
 	}
-	drawPlot($.extend({'country':'all', 'browser': 'all'}, dim), switchToPlotView);
+	drawPlot($.extend({'country':'all', 'browser':'all'}, dim));
+	if ($('#table-view tr').length > 2) {
+		$(this).parents('tr').addClass('hl').siblings().removeClass('hl');
+	}
+
+	pushState()
 });
 
-function switchToPlotView() {
-	$('#viewMask').css({
-		'height': $('.viewWrapper:eq(0)').height()
-	});
-	$('#bothViewsWrapper').animate({'left': 0}, 'fast', function() {
-		$('.viewWrapper:eq(1)').hide();
-	});
-	$('#date-unit').css({'visibility': 'visible'});
+/**
+ * Used for showing notification.
+ *
+ */
+var notification = {
+	timeout: null,
+	show: function(html) {
+		$('#notif').html(html).show();
+		clearTimeout(this.timeout);
+		this.timeout = setTimeout(function() {
+			$('#notif').fadeOut();
+		}, 10 * 1000);
+	}
 }
 
-function switchToTableView() {
-	$('#viewMask').css({
-		'height': $('.viewWrapper:eq(1)').show().height()
-	});
-	$('#bothViewsWrapper').animate({'left': - $('#bothViewsWrapper').width() / 2}, 'fast');
-	$('#date-unit').css({'visibility': 'hidden'});
-}
-
-$('#switchView').click(function() {
-	var curPos = $('#bothViewsWrapper').css('left');
-	if (curPos === '0px' || curPos === 'auto') {
-		switchToTableView();
-	} else {
-		switchToPlotView();
+$(window).keydown(function(e) {
+	if (e.which === 27) {
+		//dataUtil.cancel();
+		return false;
 	}
 });
+
+window.onpopstate = function(e) {
+	if (e.state) {
+		setOptions(e.state)
+
+		dataUtil.cancel()
+
+		redraw()
+	}
+}
+replaceState()
+
 </script>
 
 </body>

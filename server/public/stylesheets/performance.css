@@ -24,9 +24,6 @@
   padding: 20px 0;
   background-color: #fffee7;
 }
-#date-unit {
-  margin-left: 65px;
-}
 #date-range > label {
   margin-right: 10px;
 }
@@ -34,7 +31,7 @@
   margin: 0;
 }
 .btn-toolbar select {
-  margin-right: 30px;
+  margin-right: 10px;
 }
 .btn-toolbar input {
   margin-bottom: 0;
@@ -43,7 +40,7 @@
   margin-left: 20px;
 }
 .view-wrapper {
-  margin-top: 250px;
+  margin-top: 180px;
   padding: 0 20px;
 }
 #loadMask {

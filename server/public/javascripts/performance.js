@@ -128,6 +128,12 @@ var PerformanceDataCache = {
  For state BOF
  *********************************************************/
 
+ // Is pjax supported by this browser?
+$.support.pjax =
+  window.history && window.history.pushState && window.history.replaceState
+  // pushState isn't reliable on iOS until 5.
+  && !navigator.userAgent.match(/((iPod|iPhone|iPad).+\bOS\s+[1-4]|WebApps\/.+CFNetwork)/)
+
 function parseOptions() {
 	var obj = {}
 	obj.from = $('#date-start').val()

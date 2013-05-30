@@ -66,6 +66,11 @@
 <script src="javascripts/<%= type === 'mobile' ? 'mobile_performance_config.js' : 'pc_performance_config.js' %>"></script>
 
 <script>
+if (! $.support.pjax) {
+	alert('不支持当前浏览器，请使用 Chrome 或 Firefox');
+	return;
+}
+
 var abtags = ['ALL'],
 	METRICS = {'load': 'Window Load', 'domReady': 'Dom Ready', 'networkLatency': 'Network Latency'},
 	charts = {};

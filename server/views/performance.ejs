@@ -10,7 +10,7 @@
 						<div id="networkLatency-view"></div>
 					</div>
 
-					<div>
+					<div id="compre-view">
 						<div class="clearfix">
 							<dl class="dl-horizontal data-dimension pull-left hide">
 								<dt>Location:</dt>
@@ -103,17 +103,27 @@ $.cookie.defaults = {path: '/'};
 
 $('#date-start, #date-end').datepicker();
 
-$.fn.setDate = function(date) {
+$.fn.setDateVal = function(date) {
 	this.val( ('0'+(date.getMonth()+1)).slice(-2) + '/' + ('0' + date.getDate()).slice(-2) + '/' + date.getFullYear());
+}
+
+Date.prototype.addHours= function(h){
+	this.setHours(this.getHours()+h);
+	return this;
 }
 
 if ($('#date-end').val() === '') {
 	var today = new Date();
 	today.setDate(today.getDate() - 2);
-	$('#date-end').setDate(today);
+	$('#date-end').setDateVal(today);
 	today.setDate(today.getDate() - 15);
-	$('#date-start').setDate(today);
+	$('#date-start').setDateVal(today);
 }
+if ($('#date-unit').val() === 'hour') {
+	$('#date-range').hide();
+}
+
+resetAB();
 
 function acquireData(options, success) {
 	var startDate = new Date($('#date-start').val()),
@@ -123,10 +133,14 @@ function acquireData(options, success) {
 		country = $('#country').val(),
 		pageType = $('#page-type').val(),
 		pageTemplate = $('#page-template').is(':visible') ? ('-'+$('#page-template').val()) : '';
+	if (dateUnit === 'hour') {
+		endDate = new Date().addHours(-17);
+		startDate = new Date().addHours(-17-36);
+	}
 	options = $.extend(
 		{
-			startdate: '' + startDate.getFullYear() + ('0'+(startDate.getMonth()+1)).slice(-2) + ('0' + startDate.getDate()).slice(-2),
-			enddate: '' + endDate.getFullYear() + ('0'+(endDate.getMonth()+1)).slice(-2) + ('0' + endDate.getDate()).slice(-2),
+			startdate: '' + startDate.getFullYear() + ('0'+(startDate.getMonth()+1)).slice(-2) + ('0' + startDate.getDate()).slice(-2) + (dateUnit === 'hour' ? ( ('0' + startDate.getHours()).slice(-2) + '0000' ) : ''),
+			enddate: '' + endDate.getFullYear() + ('0'+(endDate.getMonth()+1)).slice(-2) + ('0' + endDate.getDate()).slice(-2) + (dateUnit === 'hour' ? ( ('0' + endDate.getHours()).slice(-2) + '5959' ) : ''),
 			dateunit: dateUnit,
 			site: pageType.substring(0, pageType.indexOf('_')),
 			page: pageType.substring(pageType.indexOf('_') + 1) + pageTemplate,
@@ -159,8 +173,9 @@ function acquireData(options, success) {
 	})
 }
 
-var ONE_DAY = 24 * 3600 * 1000,
-	EIGHT_HOURS = 8 * 3600 * 1000;
+var EIGHT_HOURS = 8 * 3600 * 1000,
+	TIME_DIFF_HOURS = 15 * 3600 * 1000,
+	ONE_HOUR = 3600 * 1000;
 
 function drawPlot(options, done) {
 	if (options && options['browser & version']) {
@@ -185,6 +200,11 @@ function drawPlot(options, done) {
 					data = allData[abtags[0]], i = 0;
 				for (; i < data.length; i++) {
 					var date = (data[i].date+'').split('');
+					if ($('#date-unit').val() === 'hour') {
+						date.splice(12, 0, ':');
+						date.splice(10, 0, ':');
+						date.splice(8, 0, ' ');
+					}
 					date.splice(6, 0, '/');
 					date.splice(4, 0, '/');
 					var j = 0;
@@ -192,7 +212,7 @@ function drawPlot(options, done) {
 						if (i === 0) {
 							series.push({name: abtags[j], data: []});
 						}
-						series[j].data.push({x: new Date(date.join('')).getTime() + EIGHT_HOURS, y: allData[abtags[j]][i][metric]});
+						series[j].data.push({x: new Date(date.join('')).getTime() + ($('#date-unit').val() === 'hour' ? TIME_DIFF_HOURS : 0) + EIGHT_HOURS, y: allData[abtags[j]][i][metric]});
 					}
 				}
 
@@ -217,7 +237,7 @@ function drawPlot(options, done) {
 					},
 					xAxis: {
 						type: 'datetime',
-						minTickInterval: ONE_DAY
+						minTickInterval: ONE_HOUR
 					},
 					yAxis: {
 						title: {
@@ -247,6 +267,11 @@ function drawPlot(options, done) {
 				data = allData[abtags[0]], i = 0;
 			for (; i < data.length; i++) {
 				var date = (data[i].date+'').split('');
+					if ($('#date-unit').val() === 'hour') {
+						date.splice(12, 0, ':');
+						date.splice(10, 0, ':');
+						date.splice(8, 0, ' ');
+					}
 				date.splice(6, 0, '/');
 				date.splice(4, 0, '/');
 				var j = 0;
@@ -254,7 +279,7 @@ function drawPlot(options, done) {
 					if (i === 0) {
 						series.push({name: METRICS[metric], data: []});
 					}
-					series[j++].data.push({x: new Date(date.join('')).getTime() + EIGHT_HOURS, y: data[i][metric]});
+					series[j++].data.push({x: new Date(date.join('')).getTime() + ($('#date-unit').val() === 'hour' ? TIME_DIFF_HOURS : 0) + EIGHT_HOURS, y: data[i][metric]});
 				});
 			}
 
@@ -279,7 +304,7 @@ function drawPlot(options, done) {
 				},
 				xAxis: {
 					type: 'datetime',
-					minTickInterval: ONE_DAY
+					minTickInterval: ONE_HOUR
 				},
 				yAxis: {
 					title: {
@@ -378,9 +403,9 @@ function drawPlot(options, done) {
 			for (m = 0; m < dimensions.length; m++) {
 				data.sort(function(a, b) {
 					if (dimensions[m] === 'Country')
-						return config.countries[a['country']] > config.countries[b['country']]
+						return config.countries[a['country']].localeCompare(config.countries[b['country']])
 					else
-						return config.browsers[a[dimensions[m].toLowerCase()]] > config.browsers[b[dimensions[m].toLowerCase()]]
+						;//return config.browsers[a[dimensions[m].toLowerCase()]].localeCompare(config.browsers[b[dimensions[m].toLowerCase()]])
 				})
 			}
 		}
@@ -458,16 +483,22 @@ function drawPlot(options, done) {
 	};
 
 	redrawTable = function() {
-		var dimensions = new Array();
-		$.each($('.data-dimension'), function() {
-			$.each($('li', this), function() {
-				if ($('a', this).length === 0) {
-					dimensions.push($.trim($(this).text()));
-				}
+		if ($('#date-unit').val() === 'hour') {
+			$('#compre-view').hide();
+			return;
+		} else {
+			$('#compre-view').show();
+			var dimensions = new Array();
+			$.each($('.data-dimension'), function() {
+				$.each($('li', this), function() {
+					if ($('a', this).length === 0) {
+						dimensions.push($.trim($(this).text()));
+					}
+				});
 			});
-		});
 
-		dataGenerator.getData(dimensions);
+			dataGenerator.getData(dimensions);
+		}
 	};
 }());
 
@@ -510,6 +541,10 @@ $('#apply-btn').click(function() {
 
 	canceled ? replaceState() : pushState()
 });
+
+$('#date-unit').change(function() {
+	$(this).val() === 'hour' ? $('#date-range').hide() : $('#date-range').show();
+})
 
 $('.data-ab').click(function() {
 	if ($('.data-ab:checked').length === 0) {

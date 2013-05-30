@@ -44,6 +44,7 @@
 					</label>
 				</div>
 				<select id="date-unit" class="pull-left input-small">
+					<option value="hour" <%= unit === 'hour' ? 'selected' : '' %>>Hour</option>
 					<option value="day" <%= unit === 'day' ? 'selected' : '' %>>Day</option>
 					<option value="week" <%= unit === 'week' ? 'selected' : '' %>>Week</option>
 					<option value="month" <%= unit === 'month' ? 'selected' : '' %>>Month</option>
@@ -60,8 +61,8 @@
 			<div class="btn-toolbar clearfix">
 				<label for="" class="pull-left">A/B Testing: </label>
 				<label class="checkbox pull-left"><input class="data-ab" type="checkbox" <%= (ab.length === 0 || ab.indexOf('ALL') > -1) ? 'checked' : '' %> value="ALL" /> All</label>
-				<label class="checkbox pull-left"><input class="data-ab" type="checkbox" <%= (ab.indexOf('A') > -1) ? 'checked' : '' %> value="A" /> A</label>
-				<label class="checkbox pull-left"><input class="data-ab" type="checkbox" <%= (ab.indexOf('B') > -1) ? 'checked' : '' %> value="B" /> B</label>
+				<label class="checkbox pull-left"><input class="data-ab" type="checkbox" <%= ((ab.length === 0 && unit === '') || ab.indexOf('A') > -1) ? 'checked' : '' %> value="A" /> A</label>
+				<label class="checkbox pull-left"><input class="data-ab" type="checkbox" <%= ((ab.length === 0 && unit === '') || ab.indexOf('B') > -1) ? 'checked' : '' %> value="B" /> B</label>
 			</div>
 			<button id="apply-btn" class="btn btn-primary">APPLY</button>
 			<div class="notif-wrapper container">

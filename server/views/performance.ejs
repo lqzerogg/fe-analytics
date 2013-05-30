@@ -400,14 +400,16 @@ function drawPlot(options, done) {
 			data[m]['Proportion'] = Math.round(data[m]['proportion'] / allVisits * 100);
 		}
 		if (dimensions && dimensions.length > 0) {
-			for (m = 0; m < dimensions.length; m++) {
-				data.sort(function(a, b) {
-					if (dimensions[m] === 'Country')
-						return config.countries[a['country']].localeCompare(config.countries[b['country']])
-					else
-						;//return config.browsers[a[dimensions[m].toLowerCase()]].localeCompare(config.browsers[b[dimensions[m].toLowerCase()]])
-				})
-			}
+			data.sort(function(a, b) {
+				for (m = 0; m < dimensions.length; m++) {
+					if (dimensions[m] === 'Country') {
+						if (config.countries[a['country']] === config.countries[b['country']]) continue;
+						return config.countries[a['country']] > config.countries[b['country']] ? 1 : -1;
+					}else
+						if (config.browsers[a[dimensions[m].toLowerCase()]] === config.browsers[b[dimensions[m].toLowerCase()]]) continue;
+						return config.browsers[a[dimensions[m].toLowerCase()]] > config.browsers[b[dimensions[m].toLowerCase()]] ? 1 : -1;
+				}
+			})
 		}
 		draw(dimensions, data);
 	};

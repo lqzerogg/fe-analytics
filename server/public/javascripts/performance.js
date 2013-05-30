@@ -148,6 +148,7 @@ function setOptions(obj) {
 	$('#date-start').val(obj.from)
 	$('#date-end').val(obj.to)
 	$('#date-unit').val(obj.unit)
+	obj.unit === 'hour' ? $('#date-range').hide() : $('#date-range').show()
 	$('#browser').val(obj.browser)
 	$('#country').val(obj.country)
 	$('#page-type').val(obj.page).change()

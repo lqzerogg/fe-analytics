@@ -212,7 +212,11 @@ function drawPlot(options, done) {
 						if (i === 0) {
 							series.push({name: abtags[j], data: []});
 						}
-						series[j].data.push({x: new Date(date.join('')).getTime() + ($('#date-unit').val() === 'hour' ? TIME_DIFF_HOURS : 0) + EIGHT_HOURS, y: allData[abtags[j]][i][metric]});
+						series[j].data.push({
+							x: new Date(date.join('')).getTime() + ($('#date-unit').val() === 'hour' ? TIME_DIFF_HOURS : 0) + EIGHT_HOURS,
+							y: allData[abtags[j]][i][metric],
+							visits: allData[abtags[j]][i]['count']
+						});
 					}
 				}
 
@@ -259,6 +263,15 @@ function drawPlot(options, done) {
 							}
 						}
 					},
+					tooltip: {
+						shared: true,
+			            useHTML: true,
+			            headerFormat: '<small>{point.key}</small><table>',
+			            pointFormat: '<tr><td style="color: {series.color}">{series.name}: </td>' +
+			            '<td><b> {point.y} ms </b></td>' +
+			            '<td style="text-align: right"> {point.visits} Visits</td></tr>',
+			            footerFormat: '</table>'
+					},
 					series: series
 				});
 			});
@@ -279,7 +292,11 @@ function drawPlot(options, done) {
 					if (i === 0) {
 						series.push({name: METRICS[metric], data: []});
 					}
-					series[j++].data.push({x: new Date(date.join('')).getTime() + ($('#date-unit').val() === 'hour' ? TIME_DIFF_HOURS : 0) + EIGHT_HOURS, y: data[i][metric]});
+					series[j++].data.push({
+						x: new Date(date.join('')).getTime() + ($('#date-unit').val() === 'hour' ? TIME_DIFF_HOURS : 0) + EIGHT_HOURS,
+						y: data[i][metric],
+						visits: data[i]['count']
+					});
 				});
 			}
 
@@ -325,6 +342,15 @@ function drawPlot(options, done) {
 							//radius: 2
 						}
 					}
+				},
+				tooltip: {
+					shared: true,
+		            useHTML: true,
+		            headerFormat: '<small>{point.key}</small><table>',
+		            pointFormat: '<tr><td style="color: {series.color}">{series.name}: </td>' +
+		            '<td><b> {point.y} ms </b></td>' +
+		            '<td style="text-align: right"> {point.visits} Visits</td></tr>',
+		            footerFormat: '</table>'
 				},
 				series: series
 			});

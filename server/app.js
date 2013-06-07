@@ -31,6 +31,7 @@ app.configure('development', function(){
 
 app.get('/', routes.index);
 app.get('/performance', routes.performance);
+app.get('/data', routes.data);
 app.get('/edit/:file(*)', file.edit);
 app.post('/save/:file(*)', file.save);
 app.post('/lint', file.lint);

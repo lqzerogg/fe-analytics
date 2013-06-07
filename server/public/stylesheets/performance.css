@@ -1,6 +1,17 @@
+label,
+input,
+button,
+select,
+textarea {
+  font-size: 12px;
+}
 .navbar-fixed-top .navbar-inner,
 .navbar-static-top .navbar-inner {
   border-bottom: none;
+  min-height: auto;
+}
+.navbar .nav > li a {
+  padding: 5px 15px;
 }
 .navbar .nav > li.active a {
   background-color: #fffee7;
@@ -18,10 +29,12 @@
 }
 .navbar .brand {
   float: right;
+  padding: 5px 20px;
+  font-size: 16px;
 }
 .option-container {
   position: relative;
-  padding: 20px 0;
+  padding: 10px 0;
   background-color: #fffee7;
 }
 #date-range > label {
@@ -32,9 +45,11 @@
 }
 .btn-toolbar select {
   margin-right: 10px;
+  height: 24px;
 }
 .btn-toolbar input {
   margin-bottom: 0;
+  height: 14px;
 }
 .btn-toolbar .checkbox {
   margin-left: 20px;

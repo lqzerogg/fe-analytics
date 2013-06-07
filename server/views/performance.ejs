@@ -660,7 +660,7 @@ var notification = {
 
 $(window).keydown(function(e) {
 	if (e.which === 27) {
-		//dataUtil.cancel();
+		// dataUtil.cancel() && notification.show('You have canceled previous operation.')
 		return false;
 	}
 });

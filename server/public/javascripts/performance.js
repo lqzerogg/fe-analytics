@@ -1,35 +1,33 @@
 var loadMask = {
 	init: function() {
-		$('#loadMask').show().find('.meter > span').css('width', 0);
+		$('#loadMask').show().find('.meter > span').css('width', 0)
 	},
 	progress: function(p) {
-		$('#loadMask > .meter > span').css('width', p + '%');
+		$('#loadMask > .meter > span').css('width', p + '%')
 	},
 	complete: function() {
-		$('#loadMask').fadeOut('slow');
+		$('#loadMask').fadeOut('slow')
 	},
 	completeNow: function() {
-		$('#loadMask').fadeOut(0);
+		$('#loadMask').fadeOut(0)
 	}
 }
-
-var protocol = ('https:' === document.location.protocol ? 'https://' : 'http://');
 
 var dataUtil = {
 	queue: 0,
 	taskManager: {
 		tasks: [],
 		size: function() {
-			return this.tasks.length;
+			return this.tasks.length
 		},
 		add: function(task) {
-			this.tasks.push(task);
+			this.tasks.push(task)
 		},
 		remove: function(task) {
-			this.tasks.splice($.inArray(task, this.tasks), 1);
+			this.tasks.splice($.inArray(task, this.tasks), 1)
 		},
 		shift: function() {
-			return this.tasks.shift();
+			return this.tasks.shift()
 		},
 		reset: function() {
 			this.tasks = []
@@ -39,43 +37,35 @@ var dataUtil = {
 	getPerformanceData: function(req, success, fail) {
 		var cache = PerformanceDataCache.get(req),
 			taskManager = this.taskManager,
-			_this = this;
+			_this = this
 		if (cache) {
-			success(cache);
-			return;
+			success(cache)
+			return
 		}
 		if (_this.queue++ === 0) {
-			loadMask.init();
+			loadMask.init()
 		}
-		var timeout = setTimeout(function() { // For using jsonp, use timeout for network error.
-			if (timeout != null) {
-				timeout = null;
-				fail();
-				_this.queue = 0;
-				loadMask.complete();
-			}
-		}, 2 * 60 * 1000);
 		var xhr = $.ajax({
-			url: protocol + 'test.webservice.com/index.php?method=vela.item.performance.get&callback=?&format=STRING',
+			url: '/data',
 			data: req,
-			dataType: 'jsonp',
 			success: function(resp) {
-				if (timeout != null && xhr.timeout != null) {
-					taskManager.remove(xhr);
-					timeout = null;
-					clearTimeout(timeout);
-					PerformanceDataCache.put(req, resp);
-					loadMask.progress( (_this.queue - taskManager.size()) / _this.queue * 100);
-					if (taskManager.size() === 0) {
-						_this.queue = 0;
-						loadMask.complete();
-					}
-					success(resp);
+				taskManager.remove(xhr)
+				PerformanceDataCache.put(req, resp)
+				loadMask.progress( (_this.queue - taskManager.size()) / _this.queue * 100)
+				if (taskManager.size() === 0) {
+					_this.queue = 0
+					loadMask.complete()
+				}
+				success(resp)
+			},
+			error: function(xhr, textStatus, errorThrown) {
+				if (textStatus !== 'abort') {
+					fail()
+					_this.cancel()
 				}
 			}
-		});
-		xhr.timeout = timeout;
-		taskManager.add(xhr);
+		})
+		taskManager.add(xhr)
 	},
 
 	cancel: function() {
@@ -86,12 +76,11 @@ var dataUtil = {
 		}
 		var xhr = this.taskManager.shift();
 		while (xhr) {
-			clearTimeout(xhr.timeout)
-			xhr.timeout = null;
+			xhr.abort()
 			xhr = this.taskManager.shift()
 		}
 		this.queue = 0
-		loadMask.completeNow();
+		loadMask.completeNow()
 		return true
 	}
 }
@@ -100,29 +89,29 @@ var dataUtil = {
 // Object items is not ordered as they were declared for non-numerical key
 // refer: http://stackoverflow.com/questions/280713/elements-order-in-a-for-in-loop
 function jsonToSortedArray(obj) {
-	var sorted = [];
+	var sorted = []
 	Object.keys(obj).sort().forEach(function(name) {
-		var item = {};
-		item[name] = obj[name];
-		sorted[sorted.length] = item;
-	});
-	return sorted;
-};
+		var item = {}
+		item[name] = obj[name]
+		sorted[sorted.length] = item
+	})
+	return sorted
+}
 
 
 var PerformanceDataCache = {
 	cache: {},
 	put: function(jsonKey, value) {
-		var strKey = JSON.stringify(jsonToSortedArray(jsonKey));
+		var strKey = JSON.stringify(jsonToSortedArray(jsonKey))
 		if (typeof(this.cache[strKey]) == 'undefined' || this.cache[strKey] == null) {
-			this.cache[strKey] = value;
+			this.cache[strKey] = value
 		}
 	},
 	get: function(jsonKey) {
-		var strKey = JSON.stringify(jsonToSortedArray(jsonKey));
-		return this.cache[strKey];
+		var strKey = JSON.stringify(jsonToSortedArray(jsonKey))
+		return this.cache[strKey]
 	}
-};
+}
 
 /*********************************************************
  For state BOF
@@ -168,14 +157,13 @@ function setOptions(obj) {
 }
 
 function pushState() {
-	var url = '/performance?' + (/mobile/.test(location.search) ? 't=mobile&' : '') + $.param(parseOptions());
-	(url !== location.pathname + location.search) && window.history.pushState(parseOptions(), document.title, url)
+	var url = '/performance?' + (/mobile/.test(location.search) ? 't=mobile&' : '') + $.param(parseOptions())
+	url !== (location.pathname + location.search) && window.history.pushState(parseOptions(), document.title, url)
 }
 
 function replaceState() {
-	var url = '/performance?' + (/mobile/.test(location.search) ? 't=mobile&' : '') + $.param(parseOptions());
-
-	(url !== location.pathname + location.search) && window.history.replaceState(parseOptions(), document.title, url)
+	var url = '/performance?' + (/mobile/.test(location.search) ? 't=mobile&' : '') + $.param(parseOptions())
+	url !== (location.pathname + location.search) && window.history.replaceState(parseOptions(), document.title, url)
 }
 
 /*********************************************************

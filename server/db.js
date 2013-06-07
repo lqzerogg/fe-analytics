@@ -160,11 +160,15 @@ exports.getData = function(options, res) {
 							  +' AND website = ' + siteId
 
 							dataUtil.getResult(sql, function(result) {
-								result[0].count = '' + result[0].sumcount
-								if (result[0].sumcount > 0) {
-									result[0].networkLatency = Math.round(result[0].sumNetworkLatency / result[0].sumcount)
-									result[0].domReady       = Math.round(result[0].sumDomReady / result[0].sumcount)
-									result[0].load           = Math.round(result[0].sumLoad / result[0].sumcount)
+								if (result[0].sumcount) {
+									result[0].count = '' + result[0].sumcount
+									if (result[0].sumcount > 0) {
+										result[0].networkLatency = Math.round(result[0].sumNetworkLatency / result[0].sumcount)
+										result[0].domReady       = Math.round(result[0].sumDomReady / result[0].sumcount)
+										result[0].load           = Math.round(result[0].sumLoad / result[0].sumcount)
+									}
+								} else {
+									result[0].count = result[0].networkLatency = result[0].domReady = result[0].load = 0
 								}
 								results.push(result[0])
 								if (results.length === count) {

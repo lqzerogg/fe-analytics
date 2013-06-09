@@ -60,6 +60,7 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 <script src="javascripts/jquery.cookie.js"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+<script src="javascripts/jquery.tablesorter.min.js"></script>
 <script src="bootstrap/js/bootstrap.js"></script>
 <script src="Highcharts-2.3.3/highcharts.js"></script>
 <script src="javascripts/performance.js"></script>
@@ -505,9 +506,28 @@ function drawPlot(options, done) {
 
 			tbodyHtml += rowHtml + '</tr>';
 		}
+		$('#table-view').replaceWith('<table id="table-view" class="table table-striped"><thead></thead><tbody></tbody></table>')
 		$('#table-view > thead').html(theadHtml + '</tr>');
 		$('#table-view > tbody').html(tbodyHtml);
 		$('.data-dimension').show();
+
+		$('#table-view').tablesorter({
+		    onRenderHeader: function (index) {
+		        // the span wrapper is added by default
+		        $(this).find('div.tablesorter-header-inner a').appendTo(this);
+		    },
+			headers: {
+		        // first column disable sort
+		        0: {
+		            sorter: false
+		        }
+		    },
+		    // initial sort order of the columns, example sortList: [[0,0],[1,0]],
+		    // [[columnIndex, sortDirection], ... ]
+		    sortList: [
+		        [1, 0]
+		    ],
+		})
 	};
 
 	redrawTable = function() {

@@ -200,3 +200,28 @@ label, input, button, select, textarea {
 	background-color: @table-hl-color;
 	font-weight: bold;
 }
+
+.tablesorter-header {
+	background-image: url(data:image/gif;base64,R0lGODlhFQAJAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAkAAAIXjI+AywnaYnhUMoqt3gZXPmVg94yJVQAAOw==);
+	background-repeat: no-repeat;
+	background-position: center left;
+	cursor: pointer;
+
+	.tablesorter-header-inner {
+		float: left;
+		padding: 0 10px;
+	}
+
+	&.sorter-false {
+		background-image: none;
+		.tablesorter-header-inner {
+			padding: 0;
+		}
+	}
+	&.tablesorter-headerAsc {
+		background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjI8Bya2wnINUMopZAQA7);
+	}
+	&.tablesorter-headerDesc {
+		background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjB+gC+jP2ptn0WskLQA7);
+	}
+}

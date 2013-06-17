@@ -8,6 +8,7 @@
 						<div id="load-view"></div>
 						<div id="domReady-view"></div>
 						<div id="networkLatency-view"></div>
+						<div id="phpResponse-view"></div>
 					</div>
 
 					<div id="compre-view">
@@ -69,6 +70,7 @@
 <script>
 var abtags = ['ALL'],
 	METRICS = {'load': 'Window Load', 'domReady': 'Dom Ready', 'networkLatency': 'Network Latency'},
+	METRICS_WITHPHP = {'load': 'Window Load', 'domReady': 'Dom Ready', 'networkLatency': 'Network Latency', 'phpResponse': 'PHP Response'},
 	charts = {};
 
 $('#page-type').change(function() {
@@ -195,8 +197,11 @@ function drawPlot(options, done) {
 			}
 		});
 
+		// Show PHP Response if date unit is not hour
+		var metrics = ($('#date-unit').val() === 'hour') ? METRICS : METRICS_WITHPHP
+
 		if (abtags.length > 1) {
-			$.each(METRICS, function(metric) {
+			$.each(metrics, function(metric) {
 				var series = [],
 					data = allData[abtags[0]], i = 0;
 				for (; i < data.length; i++) {
@@ -230,7 +235,7 @@ function drawPlot(options, done) {
 						type: 'line'
 					},
 					title: {
-						text: METRICS[metric],
+						text: metrics[metric],
 					},
 					subtitle: {
 						text:
@@ -289,9 +294,9 @@ function drawPlot(options, done) {
 				date.splice(6, 0, '/');
 				date.splice(4, 0, '/');
 				var j = 0;
-				$.each(METRICS, function(metric) {
+				$.each(metrics, function(metric) {
 					if (i === 0) {
-						series.push({name: METRICS[metric], data: []});
+						series.push({name: metrics[metric], data: []});
 					}
 					series[j++].data.push({
 						x: new Date(date.join('')).getTime() + ($('#date-unit').val() === 'hour' ? TIME_DIFF_HOURS : 0) + EIGHT_HOURS,

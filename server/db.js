@@ -141,23 +141,50 @@ exports.getData = function(options, res) {
 									break;
 							}
 							var sql =
-							  ' select "'
-							  + options.page + '" as page, "'
-							  + options.browser + '" as browser, "'
-							  + options.abTag + '" as abtag, "'
-							  + options.country + '" as country, '
-							  + formattedDate + ' as date, '
-							  +'sum(networkLatencytime * counter) as sumNetworkLatency, \
-								sum(domcontentloadtime * counter) as sumDomReady, \
-								sum(loadresponsetime * counter) as sumLoad, \
-								sum(counter) as sumcount from '
-							  + ((options.dateUnit == 'hour') ? 'fe_hourly_performance' : 'fe_daily_performance')
-							  +' where logdate >= "' + dateutil.format(startDate, 'Y-m-d H:i') + '" AND logdate <= "' + dateutil.format(regionDate, 'Y-m-d H:i') 
-							  +'" AND page_id = ' + pageId
-							  +' AND browser_id = ' + browserId
-							  +' AND abtag = ' + abTagId
-							  +' AND country_id = ' + countryId
-							  +' AND website = ' + siteId
+								(options.dateUnit == 'hour')
+								? (' select "'
+								  + options.page + '" as page, "'
+								  + options.browser + '" as browser, "'
+								  + options.abTag + '" as abtag, "'
+								  + options.country + '" as country, '
+								  + formattedDate + ' as date, '
+								  +'sum(p.networkLatencytime * counter) as sumNetworkLatency, \
+									sum(p.domcontentloadtime * counter) as sumDomReady, \
+									sum(p.loadresponsetime * counter) as sumLoad, \
+									sum(p.counter) as sumcount from fe_hourly_performance p'
+								  +' where p.logdate >= "' + dateutil.format(startDate, 'Y-m-d H:i') + '" AND p.logdate <= "' + dateutil.format(regionDate, 'Y-m-d H:i') 
+								  +'" AND p.page_id = ' + pageId
+								  +' AND p.browser_id = ' + browserId
+								  +' AND p.abtag = ' + abTagId
+								  +' AND p.country_id = ' + countryId
+								  +' AND p.website = ' + siteId )
+								:(' select "'
+								  + options.page + '" as page, "'
+								  + options.browser + '" as browser, "'
+								  + options.abTag + '" as abtag, "'
+								  + options.country + '" as country, '
+								  + formattedDate + ' as date, '
+								  +'sum(p.networkLatencytime * counter) as sumNetworkLatency, \
+									sum(p.domcontentloadtime * counter) as sumDomReady, \
+									sum(p.loadresponsetime * counter) as sumLoad, \
+									sum(p.counter) as sumcount, \
+									r.sumResponse, \
+									r.responseCount \
+									from fe_daily_performance p \
+									left outer join (select \
+									sum(response_time) as sumResponse, \
+									count(id) as responseCount \
+									from fe_php_performance where'
+								  +' website = ' + siteId
+								  +' AND page_id = ' + pageId
+								  +' AND abtag = ' + abTagId
+								  +' AND logdate >= "' + dateutil.format(startDate, 'Y-m-d H:i') + '" AND logdate <= "' + dateutil.format(regionDate, 'Y-m-d H:i') 
+								  +'") r on 1=1 where p.logdate >= "' + dateutil.format(startDate, 'Y-m-d H:i') + '" AND p.logdate <= "' + dateutil.format(regionDate, 'Y-m-d H:i') 
+								  +'" AND p.page_id = ' + pageId
+								  +' AND p.browser_id = ' + browserId
+								  +' AND p.abtag = ' + abTagId
+								  +' AND p.country_id = ' + countryId
+								  +' AND p.website = ' + siteId )
 
 							dataUtil.getResult(sql, function(result) {
 								if (result[0].sumcount) {
@@ -166,9 +193,13 @@ exports.getData = function(options, res) {
 										result[0].networkLatency = Math.round(result[0].sumNetworkLatency / result[0].sumcount)
 										result[0].domReady       = Math.round(result[0].sumDomReady / result[0].sumcount)
 										result[0].load           = Math.round(result[0].sumLoad / result[0].sumcount)
+										result[0].phpResponse    = result[0].responseCount > 0
+											? Math.round(result[0].sumResponse / result[0].responseCount)
+											: 0
 									}
 								} else {
 									result[0].count = result[0].networkLatency = result[0].domReady = result[0].load = 0
+									result[0].phpResponse = 0
 								}
 								results.push(result[0])
 								if (results.length === count) {

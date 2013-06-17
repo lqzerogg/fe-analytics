@@ -196,6 +196,7 @@ textarea {
   background-repeat: no-repeat;
   background-position: center left;
   cursor: pointer;
+  vertical-align: middle !important;
 }
 .tablesorter-header .tablesorter-header-inner {
   float: left;

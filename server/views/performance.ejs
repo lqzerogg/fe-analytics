@@ -198,7 +198,10 @@ function drawPlot(options, done) {
 		});
 
 		// Show PHP Response if date unit is not hour
-		var metrics = ($('#date-unit').val() === 'hour') ? METRICS : METRICS_WITHPHP
+		// There isn't PHP Response data for mobile
+		var metrics = ($('#date-unit').val() === 'hour')
+			? METRICS
+			: <%= type === 'mobile' ? 'METRICS' : 'METRICS_WITHPHP' %>
 
 		if (abtags.length > 1) {
 			$.each(metrics, function(metric) {

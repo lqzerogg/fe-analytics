@@ -2,7 +2,7 @@ var config = {
 	dimensions: {
 		'country': ['fr', 'us', 'it', 'es', 'gb', 'br', 'dk', 'de', 'nl', 'no', 'au', 'be', 'se', 'ca', 'ru', 'ch', 'ie', 'at', 'pt', 'gr'],
 		'browser': ['chrome-all', 'firefox-all', 'ie-all'],
-		'browser & version': ['chrome-27', 'chrome-26', 'chrome-25', 'firefox-21', 'firefox-20', 'ie-10', 'ie-9']
+		'browser & version': ['chrome-28', 'chrome-27', 'chrome-26', 'firefox-21', 'firefox-20', 'ie-10', 'ie-9']
 	},
 	countries: {
 		'fr': 'France',
@@ -28,9 +28,9 @@ var config = {
 	},
 	browsers: {
 		'chrome-all':  'Chrome',
+		'chrome-28':   'Chrome 28',
 		'chrome-27':   'Chrome 27',
 		'chrome-26':   'Chrome 26',
-		'chrome-25':   'Chrome 25',
 		'firefox-all': 'Firefox',
 		'firefox-21':  'Firefox 21',
 		'firefox-20':  'Firefox 20',
